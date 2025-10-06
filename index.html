@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>TravelCash Cashback API v4.1.3</title>
+<meta content="Documentação completa da TravelCash Cashback API v4.1.3" name="description"/>
+<style>
+    :root {
+      --bg: #0b1020;
+      --panel: #0f152b;
+      --muted: #9fb0d0;
+      --text: #e8eeff;
+      --accent: #61dafb;
+      --accent2: #7ef4c4;
+      --border: #223058;
+      --code: #0a0f1d;
+      --shadow: 0 8px 24px rgba(3,7,18,.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Inter, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); }
+
+    .wrapper { display:grid; grid-template-columns: 300px 1fr; min-height:100vh; }
+    aside { background:linear-gradient(180deg,#0c1226,#0b1121); border-right:1px solid var(--border); padding:20px; position:sticky; top:0; height:100vh; overflow:auto; }
+    main { padding:32px 40px 96px; }
+
+    .brand { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .brand img { height:36px; }
+
+    .nav h4 { color:#bcd0ff; opacity:.9; margin:20px 0 8px; }
+    .nav a { display:block; padding:8px 10px; border-radius:8px; color:var(--muted); text-decoration:none; margin-bottom:4px; }
+    .nav a:hover { background:#0d1430; color:var(--text); }
+    .nav a.active { background:linear-gradient(180deg,#111a3b,#0f1733); color:var(--text); }
+
+    section { background:linear-gradient(180deg,#0f152b,#0d142a); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:var(--shadow); margin-bottom:36px; }
+    h1,h2,h3,h4 { color:var(--text); margin-top:0; }
+    .method { font-weight:bold; }
+    .GET { color:#7ee787; }
+    .POST { color:#61dafb; }
+    .PUT { color:#ffd166; }
+    .DELETE { color:#ff6b6b; }
+
+    table { width:100%; border-collapse:collapse; margin-top:12px; margin-bottom:12px; }
+    th,td { padding:8px 10px; border-bottom:1px solid var(--border); }
+    th { color:#bcd0ff; text-align:left; }
+
+    pre, code { background:var(--code); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:auto; display:block; margin-top:8px; color:#d3e3ff; }
+
+    .pill { border:1px solid var(--border); border-radius:999px; padding:6px 12px; color:#cde0ff; background:#0a0f1d; font-size:14px; }
+
+    .footer { opacity:.7; font-size:13px; text-align:center; margin-top:48px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+<aside>
+<div class="brand">
+<img alt="TravelCash Logo" src="https://manager.travelcash.me/dist/img/home/logo-inteiro.png"/>
+</div>
+<nav class="nav">
+<h4>Endpoints</h4>
+<a href="#intro">Introdução &amp; Autenticação</a>
+<a href="#client-search">GET /api/client/search</a>
+<a href="#client-balance">GET /api/client/{id}/balance</a>
+<a href="#cliente-debito">POST /api/cliente/{id}/cashback/Debit</a>
+<a href="#cliente-debito-confirm">POST /api/cliente/{id}/cashback/DebitConfirm</a>
+<a href="#cliente-terms-accept">POST  /api/cliente/{id}/terms/accept</a>
+<a href="#env">GET /api/Public/environment</a>
+<a href="#pingpong">POST /api/Public/pingpong</a>
+<a href="#queue">POST /api/Public/queue</a>
+<h4>Models</h4>
+<a href="#models">LoginApp / ProcQueueInsertRequest</a>
+</nav>
+</aside>
+<main>
+<section id="intro">
+<h1>TravelCash Cashback API <span class="pill">v4.1.3</span></h1>
+<p>Bem-vindo à documentação pública da <strong>TravelCash Cashback API</strong>. Esta API permite integrações com o ecossistema de cashback da TravelCash, oferecendo endpoints para consulta de saldo, registro de débitos e comunicação assíncrona com o backend.</p>
+<h3>Autenticação</h3>
+<p>Todos os endpoints exigem autenticação via header <code>x-client-key</code>.</p>
+<pre><code>x-client-key: &lt;SEU_CLIENT_KEY&gt;</code></pre>
+</section>
+<section id="client-search">
+<h2><span class="method GET">GET</span> /api/client/search</h2>
+<p>Verifica se um cliente específico já possui conta na base de cashback.</p>
+<table>
+<thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+<tbody>
+<tr><td>AccountID</td><td>UUID</td><td>Não</td><td>Identificador da conta.</td></tr>
+<tr><td>PhoneNumber</td><td>String</td><td>Não</td><td>Telefone do cliente (E.164).</td></tr>
+<tr><td>Email</td><td>String</td><td>Não</td><td>Email do cliente.</td></tr>
+</tbody>
+</table>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/search?Email=ana@exemplo.com" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;"</code></pre>
+<h3>Resposta 200 (exemplo)</h3>
+<pre><code></code></pre>
+</section>
+<section id="client-balance">
+<h2><span class="method GET">GET</span> /api/client/{id}/balance</h2>
+<p>Retorna o saldo atual de cashback e o histórico completo de transações do cliente.</p>
+<table>
+<thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+<tbody><tr><td>id</td><td>UUID</td><td>Sim</td><td>ID do cliente.</td></tr></tbody>
+</table>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/b5e18fda-0c3d-4647-90b1-a3312b61a87e/balance" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;"</code></pre>
+<h3>Resposta 200 (exemplo)</h3>
+<pre><code>[
+  {
+    "account": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "legalId": "00000000000",
+      "status": 1,
+      "type": "",
+      "creationTime": "2025-06-10T12:47:13.7911379+00:00",
+      "updateTime": "2025-10-06T17:27:27.03731+00:00",
+      "countryId": "00000000-0000-0000-0000-000000000000",
+      "lastAccessTime": "2025-10-06T17:16:58.2312734+00:00",
+      "lastActivity": "2025-10-06T17:16:58.2362718+00:00",
+      "expireDays": 365
+    },
+    "accountDetails": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "ANA SANTOS",
+      "email": "ana@exemplo.com",
+      "phoneNumber": "",
+      "accountId": "00000000-0000-0000-0000-000000000000",
+      "creationTime": "0001-01-01T00:00:00+00:00",
+      "updateTime": "0001-01-01T00:00:00+00:00",
+      "validEmail": false,
+      "validPhoneNumber": false
+    },
+    "balance": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "available": 80.71,
+      "accountId": "00000000-0000-0000-0000-000000000000",
+      "creationTime": "0001-01-01T00:00:00+00:00",
+      "updateTime": "2025-09-09T16:19:51.9300407+00:00",
+      "accumulation": 80.71,
+      "spentPoints": 0
+    }
+  }
+]</code></pre>
+</section>
+<section id="cliente-debito">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/cashback/Debit</h2>
+<p>Registra um débito de cashback quando o cliente utiliza seu saldo para uma compra.</p>
+<h3>Validações</h3>
+<ul>
+<li>Cliente deve existir na base.</li>
+<li>Saldo suficiente para débito.</li>
+<li>Transação não duplicada.</li>
+<li>Valor deve ser positivo.</li>
+</ul>
+<h3>Body (exemplo)</h3>
+<pre><code>{
+  "valorDebito": 49.90,
+  "idTransacaoVenda": "4f0e2cdb-6a22-4ef2-8b7f-558e6b2e0a22",
+  "dataOperacao": "2025-10-06T11:15:00-03:00"
+}</code></pre>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/b5e18fda-0c3d-4647-90b1-a3312b61a87e/cashback/Debit" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;" \
+  -d '{ "valorDebito": 49.90, "idTransacaoVenda": "4f0e2cdb-6a22-4ef2-8b7f-558e6b2e0a22" }'</code></pre>
+<h3>Resposta 200 (exemplo)</h3>
+<pre><code>{
+  "accountId": "b5e18fda-0c3d-4647-90b1-a3312b61a87e",
+  "debited": 49.90,
+  "newBalance": 305.10,
+  "status": "ok"
+}</code></pre>
+</section>
+<!-- /api/cliente/{id}/cashback/DebitConfirm -->
+<section id="cliente-debito-confirm">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/cashback/DebitConfirm</h2>
+<p>
+    Recebe a <strong>confirmação da conclusão</strong> de um débito de cashback após o seu sistema receber (e processar)
+    o <em>POST</em> enviado ao <strong>webhook do cliente</strong>. Este endpoint consolida a operação na TravelCash.
+  </p>
+<h3>Autenticação</h3>
+<pre><code>x-client-key: &lt;SEU_CLIENT_KEY&gt;</code></pre>
+<div class="meta">
+<span class="pill">Idempotente via header</span>
+<span class="pill">Recomendado: verificação de assinatura</span>
+</div>
+<h3>Parâmetros</h3>
+<table>
+<thead>
+<tr><th>Local</th><th>Nome</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
+</thead>
+<tbody>
+<tr><td>path</td><td>id</td><td>uuid</td><td>sim</td><td>ID do cliente (AccountId).</td></tr>
+<tr><td>header</td><td>x-client-key</td><td>string</td><td>sim</td><td>Chave do cliente.</td></tr>
+<tr><td>header</td><td>Idempotency-Key</td><td>string</td><td>recomendado</td><td>Garante idempotência da confirmação.</td></tr>
+<tr><td>header</td><td>X-Signature</td><td>string</td><td>opcional</td><td>Assinatura HMAC do payload para validação.</td></tr>
+</tbody>
+</table>
+<h3>Request Body (JSON)</h3>
+<table>
+<thead>
+<tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
+</thead>
+<tbody>
+<tr><td>transactionId</td><td>uuid</td><td>sim</td><td>ID da transação de débito criada anteriormente.</td></tr>
+<tr><td>webhookEventId</td><td>uuid</td><td>sim</td><td>Identificador único do evento recebido no seu webhook.</td></tr>
+<tr><td>status</td><td>string</td><td>sim</td><td><code>confirmed</code> | <code>failed</code>.</td></tr>
+<tr><td>processedAt</td><td>date-time</td><td>sim</td><td>Data/hora (ISO-8601) em que o seu sistema concluiu a operação.</td></tr>
+<tr><td>amount</td><td>number</td><td>opcional</td><td>Valor efetivamente debitado (quando aplicável).</td></tr>
+<tr><td>reference</td><td>string</td><td>opcional</td><td>Referência/identificador interno (ex.: <em>orderId</em>).</td></tr>
+<tr><td>metadata</td><td>object</td><td>opcional</td><td>Dados adicionais úteis para auditoria.</td></tr>
+</tbody>
+</table>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/b5e18fda-0c3d-4647-90b1-a3312b61a87e/cashback/DebitConfirm" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;" \
+  -H "Idempotency-Key: 1f1c8e8a-7fb0-4f4d-bc7c-23e9a2a7a111" \
+  -H "X-Signature: sha256=ab12cd34..." \
+  -d '{
+    "transactionId": "a3d1c2f0-76dd-4e7b-95e0-6cc1cd4c66c1",
+    "webhookEventId": "2f3c8e88-5529-47b3-b7cb-91e79cda21f5",
+    "status": "confirmed",
+    "processedAt": "2025-10-06T14:10:00Z",
+    "amount": 49.90,
+    "reference": "ORDER-20251006-99",
+    "metadata": { "gateway": "AcquirerX", "authCode": "123456" }
+  }'</code></pre>
+<h3>Respostas</h3>
+<table>
+<thead><tr><th>Status</th><th>Condição</th><th>Exemplo</th></tr></thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Confirmação registrada (operação concluída).</td>
+<td><pre><code>{
+  "status": "ok",
+  "transactionId": "a3d1c2f0-76dd-4e7b-95e0-6cc1cd4c66c1",
+  "webhookEventId": "2f3c8e88-5529-47b3-b7cb-91e79cda21f5",
+  "newBalance": 305.10
+}</code></pre></td>
+</tr>
+<tr>
+<td>202</td>
+<td>Confirmação aceita para processamento assíncrono.</td>
+<td><pre><code>{ "status": "accepted", "queueId": "c1a2b3..." }</code></pre></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Payload inválido.</td>
+<td><pre><code>{ "error": "invalid_request", "field": "status" }</code></pre></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Falta/erro de <code>x-client-key</code>.</td>
+<td><pre><code>{ "error": "unauthorized" }</code></pre></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Cliente ou transação não encontrados.</td>
+<td><pre><code>{ "error": "not_found" }</code></pre></td>
+</tr>
+<tr>
+<td>409</td>
+<td>Divergência de estado/valor.</td>
+<td><pre><code>{ "error": "conflict", "message": "status already confirmed" }</code></pre></td>
+</tr>
+<tr>
+<td>422</td>
+<td>Assinatura inválida (se usada).</td>
+<td><pre><code>{ "error": "invalid_signature" }</code></pre></td>
+</tr>
+<tr>
+<td>500</td>
+<td>Erro inesperado.</td>
+<td><pre><code>{ "error": "internal_error" }</code></pre></td>
+</tr>
+</tbody>
+</table>
+<h3>Notas de implementação</h3>
+<ul>
+<li><strong>Idempotência:</strong> repetições com o mesmo <code>Idempotency-Key</code> devem retornar o mesmo resultado.</li>
+<li><strong>Validações chave:</strong> status permitido, correspondência com débito original, não duplicar confirmações.</li>
+<li><strong>Segurança:</strong> recomenda-se <em>HMAC (X-Signature)</em> sobre o corpo + timestamp para validar origem.</li>
+</ul>
+</section>
+<!-- /api/cliente/{id}/terms/accept -->
+<section id="cliente-terms-accept">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/terms/accept</h2>
+<p>
+    Similar ao <code>/api/Content/ConfirmRead</code> (API interna), este endpoint registra a
+    <strong>aceitação dos Termos e Condições</strong> pelo cliente quando ainda não houver aceite.
+  </p>
+<h3>Autenticação</h3>
+<pre><code>x-client-key: &lt;SEU_CLIENT_KEY&gt;</code></pre>
+<div class="meta">
+<span class="pill">Auditoria</span>
+<span class="pill">Idempotente por contentId</span>
+</div>
+<h3>Parâmetros</h3>
+<table>
+<thead>
+<tr><th>Local</th><th>Nome</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
+</thead>
+<tbody>
+<tr><td>path</td><td>id</td><td>uuid</td><td>sim</td><td>ID do cliente (AccountId).</td></tr>
+<tr><td>header</td><td>x-client-key</td><td>string</td><td>sim</td><td>Chave do cliente.</td></tr>
+<tr><td>header</td><td>Idempotency-Key</td><td>string</td><td>recomendado</td><td>Evita duplicidade de aceite.</td></tr>
+</tbody>
+</table>
+<h3>Request Body (JSON)</h3>
+<table>
+<thead>
+<tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr>
+</thead>
+<tbody>
+<tr><td>contentId</td><td>uuid</td><td>sim</td><td>ID do documento de Termos/Políticas a ser aceito.</td></tr>
+<tr><td>acceptedAt</td><td>date-time</td><td>opcional</td><td>Momento do aceite (server-time usado se ausente).</td></tr>
+<tr><td>channel</td><td>string</td><td>opcional</td><td>Origem do aceite (ex.: <code>app</code>, <code>web</code>).</td></tr>
+<tr><td>userAgent</td><td>string</td><td>opcional</td><td>User-Agent do cliente.</td></tr>
+<tr><td>ip</td><td>string</td><td>opcional</td><td>IP público do cliente.</td></tr>
+<tr><td>version</td><td>string</td><td>opcional</td><td>Versão do documento aceito (se aplicável).</td></tr>
+<tr><td>metadata</td><td>object</td><td>opcional</td><td>Campos adicionais (ex.: geolocalização).</td></tr>
+</tbody>
+</table>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/b5e18fda-0c3d-4647-90b1-a3312b61a87e/terms/accept" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;" \
+  -H "Idempotency-Key: e0b1e2f3-4a5b-6c7d-8e9f-101112131415" \
+  -d '{
+    "contentId": "9a1b2c3d-4e5f-6789-aaaa-bbbbccccdddd",
+    "channel": "web",
+    "userAgent": "Mozilla/5.0",
+    "ip": "203.0.113.10",
+    "version": "v3.2",
+    "metadata": { "locale": "pt-BR" }
+  }'</code></pre>
+<h3>Respostas</h3>
+<table>
+<thead><tr><th>Status</th><th>Condição</th><th>Exemplo</th></tr></thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Aceite registrado com sucesso.</td>
+<td><pre><code>{
+  "status": "accepted",
+  "confirmationId": "bbf2d7b4-7c65-4f27-9f2e-2af8a0b4e0a1",
+  "contentId": "9a1b2c3d-4e5f-6789-aaaa-bbbbccccdddd",
+  "acceptedAt": "2025-10-06T14:12:00Z"
+}</code></pre></td>
+</tr>
+<tr>
+<td>200</td>
+<td>Idempotente: aceite já existente para este <code>contentId</code> + cliente.</td>
+<td><pre><code>{
+  "status": "already_accepted",
+  "confirmationId": "bbf2d7b4-7c65-4f27-9f2e-2af8a0b4e0a1",
+  "acceptedAt": "2025-09-15T10:00:00Z"
+}</code></pre></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Payload inválido.</td>
+<td><pre><code>{ "error": "invalid_request", "field": "contentId" }</code></pre></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Falta/erro de <code>x-client-key</code>.</td>
+<td><pre><code>{ "error": "unauthorized" }</code></pre></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Cliente ou conteúdo não encontrados.</td>
+<td><pre><code>{ "error": "not_found" }</code></pre></td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflito de versão do documento (ex.: versão desatualizada).</td>
+<td><pre><code>{ "error": "version_conflict", "required": "v3.2" }</code></pre></td>
+</tr>
+<tr>
+<td>500</td>
+<td>Erro inesperado.</td>
+<td><pre><code>{ "error": "internal_error" }</code></pre></td>
+</tr>
+</tbody>
+</table>
+<h3>Notas de implementação</h3>
+<ul>
+<li>Registre auditoria: <em>accountId</em>, <em>contentId</em>, <em>acceptedAt</em>, IP, userAgent, canal e versão.</li>
+<li>Garanta idempotência por combinação <em>accountId</em> + <em>contentId</em> (e opcionalmente <em>version</em>).</li>
+<li>Se o documento exigir versão mínima vigente, valide e retorne <code>409 version_conflict</code>.</li>
+</ul>
+</section>
+<section id="env">
+<h2><span class="method GET">GET</span> /api/Public/environment</h2>
+<p>Retorna informações sobre o ambiente atual e status da API.</p>
+<pre><code>{
+  "environment": "Production",
+  "version": "v4.1.3",
+  "timestamp": "2025-10-06T14:00:00Z"
+}</code></pre>
+</section>
+<section id="pingpong">
+<h2><span class="method POST">POST</span> /api/Public/pingpong</h2>
+<p>Teste de comunicação com o ambiente e verificação de autenticação.</p>
+<h3>Body (LoginApp)</h3>
+<pre><code>{
+  "login": "teste",
+  "password": "1234",
+  "timeoutInMinutes": 15,
+  "geolocation": "São Paulo, BR",
+  "devInfo": "Windows 11"
+}</code></pre>
+</section>
+<section id="queue">
+<h2><span class="method POST">POST</span> /api/Public/queue</h2>
+<p>Insere um item na fila de processamento assíncrono (ex: geração de cashback).</p>
+<pre><code>{
+  "clientUnit": "WEBAPP",
+  "value": 199.90,
+  "indentificator": "TRX-20251006-001",
+  "userName": "Maria Silva",
+  "userMail": "maria@exemplo.com",
+  "userPhone": "+5511999998888",
+  "qualifier": {"canal": "web"},
+  "extraData": {"origem": "checkout"}
+}</code></pre>
+</section>
+<section id="models">
+<h2>Models</h2>
+<h3>LoginApp</h3>
+<table>
+<thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+<tbody>
+<tr><td>login</td><td>string</td><td>Usuário</td></tr>
+<tr><td>password</td><td>string</td><td>Senha</td></tr>
+<tr><td>timeoutInMinutes</td><td>number</td><td>Duração da sessão</td></tr>
+<tr><td>geolocation</td><td>string</td><td>Localização</td></tr>
+<tr><td>devInfo</td><td>string</td><td>Informações do dispositivo</td></tr>
+</tbody>
+</table>
+<h3>ProcQueueInsertRequest</h3>
+<table>
+<thead><tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr></thead>
+<tbody>
+<tr><td>clientUnit</td><td>string</td><td>Unidade do cliente</td></tr>
+<tr><td>value</td><td>number</td><td>Valor da operação</td></tr>
+<tr><td>indentificator</td><td>string</td><td>Identificador único</td></tr>
+<tr><td>userName</td><td>string</td><td>Nome do usuário</td></tr>
+<tr><td>userMail</td><td>string</td><td>Email do usuário</td></tr>
+<tr><td>userPhone</td><td>string</td><td>Telefone</td></tr>
+<tr><td>qualifier</td><td>object</td><td>Qualificadores adicionais</td></tr>
+<tr><td>extraData</td><td>object</td><td>Informações extras</td></tr>
+</tbody>
+</table>
+</section>
+<div class="footer">
+        © 2025 TravelCash Cashback API – v4.1.3. Todos os direitos reservados.
+      </div>
+</main>
+</div>
+</body>
+</html>
