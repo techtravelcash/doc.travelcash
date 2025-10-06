@@ -1,8 +1,6 @@
-
 <!DOCTYPE html>
 
-<html lang="pt-BR">
-<head>
+<html><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>TravelCash Cashback API v4.1.3</title>
@@ -36,7 +34,7 @@
     .nav a.active { background:linear-gradient(180deg,#111a3b,#0f1733); color:var(--text); }
 
     section { background:linear-gradient(180deg,#0f152b,#0d142a); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:var(--shadow); margin-bottom:36px; }
-    h1,h2,h3,h4 { color:var(--text); margin-top:0; }
+    h1,h2,h3,h4 { color:var(--text); margin-top:20px; }
     .method { font-weight:bold; }
     .GET { color:#7ee787; }
     .POST { color:#61dafb; }
@@ -47,14 +45,533 @@
     th,td { padding:8px 10px; border-bottom:1px solid var(--border); }
     th { color:#bcd0ff; text-align:left; }
 
-    pre, code { background:var(--code); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:auto; display:block; margin-top:8px; color:#d3e3ff; }
+    pre, code { background:var(--code); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:auto; display:block; margin-top:8px; color:#d3e3ff; margin-bottom: 10px;}
 
     .pill { border:1px solid var(--border); border-radius:999px; padding:6px 12px; color:#cde0ff; background:#0a0f1d; font-size:14px; }
 
     .footer { opacity:.7; font-size:13px; text-align:center; margin-top:48px; }
   </style>
-</head>
-<body>
+<style>
+#lang-en[hidden], #lang-pt[hidden]{display:none !important}
+.lang-toggle{position:fixed;top:12px;right:12px;background:#fff;border:1px solid #d0d0d0;border-radius:10px;padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:99999;font-family:Arial,Helvetica,sans-serif}
+.lang-toggle button{background:none;border:0;cursor:pointer;font-size:14px;padding:4px 6px}
+.lang-toggle .sep{opacity:.5;margin:0 4px}
+</style>
+<script>
+(function(){
+  function setLang(lang){
+    var en = document.getElementById('lang-en');
+    var pt = document.getElementById('lang-pt');
+    if(!en || !pt) return;
+    en.hidden = (lang !== 'en');
+    pt.hidden = (lang !== 'pt');
+    try { localStorage.setItem('selectedLang', lang); } catch(e){}
+  }
+  window.setLang = setLang;
+  document.addEventListener('DOMContentLoaded', function(){
+    var saved = 'en';
+    try {
+      var v = localStorage.getItem('selectedLang');
+      if (v === 'pt' || v === 'en') saved = v;
+    } catch(e){}
+    setLang(saved);
+  });
+})();
+</script>
+</head><body>
+<div aria-label="Language toggle" class="lang-toggle" role="group">
+<button onclick="setLang('en')" title="English" type="button">🇺🇸 EN</button>
+<span class="sep">|</span>
+<button onclick="setLang('pt')" title="Português" type="button">🇧🇷 PT</button>
+</div>
+<section data-lang="en" id="lang-en">
+<div class="wrapper">
+<aside>
+<div class="brand">
+<img alt="TravelCash Logo" src="https://manager.travelcash.me/dist/img/home/logo-inteiro.png"/>
+</div>
+<nav class="nav">
+<h4>Endpoints</h4>
+<a href="#intro">Introduction &amp; Authentication</a>
+<a href="#client-search">GET /api/client/search</a>
+<a href="#client-balance">GET /api/client/{id}/balance</a>
+<a href="#cliente-debito">POST /api/cliente/{id}/cashback/Debit</a>
+<a href="#cliente-debito-confirm">POST /api/cliente/{id}/cashback/DebitConfirm</a>
+<a href="#cliente-terms-accept">POST  /api/cliente/{id}/terms/accept</a>
+<a href="#env">GET /api/Public/environment</a>
+<a href="#pingpong">POST /api/Public/pingpong</a>
+<a href="#queue">POST /api/Public/queue</a>
+<h4>Models</h4>
+<a href="#models">LoginApp / ProcQueueInsertRequest</a>
+</nav>
+</aside>
+<main>
+<section id="intro">
+<h1>TravelCash Cashback API <span class="pill">v4.1.3</span></h1>
+<p>Welcome to the public documentation for the <strong>TravelCash Cashback API</strong>. This API enables integrations with the TravelCash cashback ecosystem, providing endpoints for balance inquiries, debit registration, and asynchronous communication with the backend.
+</p>
+<h3>Authentication</h3>
+<p>All endpoints require authentication via the <code>x-client-key header</code>.</p>
+<pre><code>x-client-key: &lt;YOUR_CLIENT_KEY&gt;</code></pre>
+</section>
+<section id="client-search">
+<h2><span class="method GET">GET</span> /api/client/search</h2>
+<p>Checks whether a specific customer already has an account in the cashback database.</p>
+<table>
+<thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>AccountID</td><td>UUID</td><td>No</td><td>Account Identifier.</td></tr>
+<tr><td>PhoneNumber</td><td>String</td><td>No</td><td>Phonenumber.</td></tr>
+<tr><td>Email</td><td>String</td><td>No</td><td>Email</td></tr>
+</tbody>
+</table>
+<h3>Request example</h3>
+<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/search?Email=ana@exemplo.com" \
+  -H "x-client-key: &lt;YOUR_CLIENT_KEY&gt;"</code></pre>
+<h3>200 Response (example)</h3>
+<pre><code>[
+  {
+    "account": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "legalId": "00000000000",
+      "status": 1,
+      "type": "",
+      "creationTime": "2025-06-10T12:47:13.7911379+00:00",
+      "updateTime": "2025-10-06T17:27:27.03731+00:00",
+      "countryId": "00000000-0000-0000-0000-000000000000",
+      "lastAccessTime": "2025-10-06T17:16:58.2312734+00:00",
+      "lastActivity": "2025-10-06T17:16:58.2362718+00:00",
+      "expireDays": 365
+    },
+    "accountDetails": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "ANA SANTOS",
+      "email": "ana@exemplo.com",
+      "phoneNumber": "",
+      "accountId": "00000000-0000-0000-0000-000000000000",
+      "creationTime": "0001-01-01T00:00:00+00:00",
+      "updateTime": "0001-01-01T00:00:00+00:00",
+      "validEmail": false,
+      "validPhoneNumber": false
+    },
+    "balance": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "available": 80.71,
+      "accountId": "00000000-0000-0000-0000-000000000000",
+      "creationTime": "0001-01-01T00:00:00+00:00",
+      "updateTime": "2025-09-09T16:19:51.9300407+00:00",
+      "accumulation": 80.71,
+      "spentPoints": 0
+    }
+  }
+]</code></pre>
+</section>
+<section id="client-balance">
+<h2><span class="method GET">GET</span> /api/client/{id}/balance</h2>
+<p>Returns the customer's current cashback balance and complete transaction history.</p>
+<table>
+<thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody><tr><td>id</td><td>UUID</td><td>Yes</td><td>Client's ID.</td></tr></tbody>
+</table>
+<h3>Request example</h3>
+<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/00000000-0000-0000-0000-000000000000/balance" \
+  -H "x-client-key: &lt;YOUR_CLIENT_KEY&gt;"</code></pre>
+<h3>200 Response (example)</h3>
+<pre><code>{
+  "accountDetails": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "ARTUR OLIVEIRA",
+    "email": "artur@gmail.com",
+    "phoneNumber": "5585999999999",
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "creationTime": "0001-01-01T00:00:00+00:00",
+    "updateTime": "0001-01-01T00:00:00+00:00",
+    "validEmail": false,
+    "validPhoneNumber": false
+  },
+  "account": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "legalId": "000000000000",
+    "status": 1,
+    "type": "",
+    "creationTime": "2024-11-11T01:38:15.363123+00:00",
+    "updateTime": "2025-08-24T10:46:25.5028337+00:00",
+    "countryId": "69518c70-d652-4408-9c69-c2858c83264c",
+    "lastAccessTime": "2025-10-06T16:59:08.0692981+00:00",
+    "notshowtravelcard": true,
+    "lastActivity": "2025-10-06T17:30:37.255845+00:00",
+    "expireDays": 365
+  },
+  "balance": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "available": 0,
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "creationTime": "0001-01-01T00:00:00+00:00",
+    "accumulation": 1095.13,
+    "spentPoints": 1095.13
+  },
+  "setups": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "defaultCurrencyId": "c3c04389-ccf9-4aaa-8e2d-fba68eea58f8",
+    "defaultCountryId": "69518c70-d652-4408-9c69-c2858c83264c",
+    "lang": "pt-BR",
+    "notificationByEmail": true,
+    "notificationByPhone": true,
+    "notificationByPush": true,
+    "notificationByWhatsapp": true,
+    "defaultChannel": "0",
+    "currency": {
+      "id": "c3c04389-ccf9-4aaa-8e2d-fba68eea58f8",
+      "name": "Brazilian Real",
+      "code": "BRL",
+      "symbol": "R$",
+      "creationTime": "2024-01-26T16:51:22.714487+00:00",
+      "updateTime": "2025-10-06T17:30:01.4298737+00:00",
+      "currentExchangeRate": 5.31,
+      "exchangeRateUpdateTime": "2025-10-06T17:30:01.4248155+00:00"
+    }
+  },
+  "polices": [
+    {
+      "contentId": "84f5d9fa-efbb-49f1-97b7-f876092bba17",
+      "title": "Termos e Condições",
+      "description": "Termos e condições - pt-br",
+      "richText": "&lt;p&gt;...&lt;/p&gt;",
+      "isActive": true,
+      "publishDate": "2024-09-30T04:59:04.243",
+      "contentType": 2,
+      "requiresReadConfirmation": true,
+      "language": "pt-BR",
+      "children": [],
+      "readed": true,
+      "contentReadConfirmation": {
+        "confirmationId": "2ab1f508-8dc0-49ca-93b2-932e47c01882",
+        "contentId": "84f5d9fa-efbb-49f1-97b7-f876092bba17",
+        "accountId": "00000000-0000-0000-0000-000000000000",
+        "confirmationDate": "2024-12-10T15:10:48.433"
+      }
+    }
+  ],
+  "result": true,
+  "message": "OK",
+  "status": 0
+}</code></pre>
+</section>
+<section id="cliente-debito">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/cashback/Debit</h2>
+<p>Posts a cashback debit when the customer uses their balance for a purchase.</p>
+<h3>Validations</h3>
+<ul>
+<li>Client must exist in the database.</li>
+<li>Sufficient balance for debit.</li>
+<li>Non-duplicate transaction.</li>
+<li>Amount must be positive.</li>
+</ul>
+<h3>Body (exemplo)</h3>
+<pre><code>{
+  "valorDebito": 49.90,
+  "idTransacaoVenda": "4f0e2cdb-6a22-4ef2-8b7f-558e6b2e0a22",
+  "dataOperacao": "2025-10-06T11:15:00-03:00"
+}</code></pre>
+<h3>Request example</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/00000000-0000-0000-0000-000000000000/cashback/Debit" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;YOUR_CLIENT_KEY&gt;" \
+  -d '{ "valorDebito": 49.90, "idTransacaoVenda": "4f0e2cdb-6a22-4ef2-8b7f-558e6b2e0a22" }'</code></pre>
+<h3>200 Response (example)</h3>
+<pre><code>{
+  "accountId": "00000000-0000-0000-0000-000000000000",
+  "debited": 49.90,
+  "newBalance": 305.10,
+  "status": "ok"
+}</code></pre>
+</section>
+<!-- /api/cliente/{id}/cashback/DebitConfirm -->
+<section id="cliente-debito-confirm">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/cashback/DebitConfirm</h2>
+<p>
+    Receive <strong>confirmation of completion</strong> of a cashback debit after your system receives (and processes)
+the <em>POST</em> sent to <strong>the customer's webhook</strong>. This endpoint consolidates the transaction in TravelCash.
+  </p>
+<h3>Authentication</h3>
+<pre><code>x-client-key: &lt;YOUR_CLIENT_KEY&gt;</code></pre>
+<div class="meta">
+<span class="pill">Idempotent by header</span>
+</div>
+<h3>Parameters</h3>
+<table>
+<thead>
+<tr><th>Local</th><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>path</td><td>id</td><td>uuid</td><td>sim</td><td>AccountId.</td></tr>
+<tr><td>header</td><td>x-client-key</td><td>string</td><td>sim</td><td> client Key.</td></tr>
+<tr><td>header</td><td>Idempotency-Key</td><td>string</td><td>Recomended</td><td>Ensures idempotence of confirmation.</td></tr>
+</tbody>
+</table>
+<h3>Request Body (JSON)</h3>
+<table>
+<thead>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>transactionId</td><td>uuid</td><td>yes</td><td>ID of the previously created debit transaction.</td></tr>
+<tr><td>webhookEventId</td><td>uuid</td><td>yes</td><td>Unique identifier of the event received in your webhook.</td></tr>
+<tr><td>status</td><td>string</td><td>yes</td><td><code>confirmed</code> | <code>failed</code>.</td></tr>
+<tr><td>processedAt</td><td>date-time</td><td>yes</td><td>Date/time (ISO-8601) your system completed the operation.</td></tr>
+<tr><td>amount</td><td>number</td><td>optional</td><td>Amount actually debited (if applicable).</td></tr>
+<tr><td>reference</td><td>string</td><td>optional</td><td>Internal reference/identifier (e.g., <em>orderId</em>).</td></tr>
+<tr><td>metadata</td><td>object</td><td>optional</td><td>Additional data useful for auditing.</td></tr></tbody>
+</table>
+<h3>Request example</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/b5e18fda-0c3d-4647-90b1-a3312b61a87e/cashback/DebitConfirm" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;YOUR_CLIENT_KEY&gt;" \
+  -H "Idempotency-Key: 1f1c8e8a-7fb0-4f4d-bc7c-23e9a2a7a111" \
+  -H "X-Signature: sha256=ab12cd34..." \
+  -d '{
+    "transactionId": "a3d1c2f0-76dd-4e7b-95e0-6cc1cd4c66c1",
+    "webhookEventId": "2f3c8e88-5529-47b3-b7cb-91e79cda21f5",
+    "status": "confirmed",
+    "processedAt": "2025-10-06T14:10:00Z",
+    "amount": 49.90,
+    "reference": "ORDER-20251006-99",
+    "metadata": { "gateway": "AcquirerX", "authCode": "123456" }
+  }'</code></pre>
+<h3>Respostas</h3>
+<table>
+<thead><tr><th>Status</th><th>Condition</th><th>Example</th></tr></thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Confirmation registered (concluded operation).</td>
+<td><pre><code>{
+  "status": "ok",
+  "transactionId": "a3d1c2f0-76dd-4e7b-95e0-6cc1cd4c66c1",
+  "webhookEventId": "2f3c8e88-5529-47b3-b7cb-91e79cda21f5",
+  "newBalance": 305.10
+}</code></pre></td>
+</tr>
+<tr>
+<td>202</td>
+<td>assíncronous Confirmation.</td>
+<td><pre><code>{ "status": "accepted", "queueId": "c1a2b3..." }</code></pre></td>
+</tr>
+<tr>
+<td>400</td>
+<td> Invalid Payload .</td>
+<td><pre><code>{ "error": "invalid_request", "field": "status" }</code></pre></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Falta/erro de <code>x-client-key</code>.</td>
+<td><pre><code>{ "error": "unauthorized" }</code></pre></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Client or transaction not found.</td>
+<td><pre><code>{ "error": "not_found" }</code></pre></td>
+</tr>
+<tr>
+<td>409</td>
+<td>Missmatch of state/value.</td>
+<td><pre><code>{ "error": "conflict", "message": "status already confirmed" }</code></pre></td>
+</tr>
+<tr>
+<td>422</td>
+<td>invalid Signature (if used).</td>
+<td><pre><code>{ "error": "invalid_signature" }</code></pre></td>
+</tr>
+<tr>
+<td>500</td>
+<td>unexpected Error.</td>
+<td><pre><code>{ "error": "internal_error" }</code></pre></td>
+</tr>
+</tbody>
+</table>
+<h3>Implementation notes</h3>
+<ul>
+<li><strong>Idempotency:</strong> Reruns with the same <code>Idempotency-Key</code> should return the same result.</li>
+<li><strong>Key Validations:</strong> Allowed status, match with original debit, do not duplicate confirmations.</li>
+<li><strong>Security:</strong> <em>HMAC (X-Signature)</em> is recommended over the body + timestamp to validate origin.</li>
+</ul>
+</section>
+<!-- /api/cliente/{id}/terms/accept -->
+<section id="cliente-terms-accept">
+<h2><span class="method POST">POST</span> /api/cliente/{id}/terms/accept</h2>
+  <p>
+    This endpoint records the client's <strong>acceptance of the Terms &amp; Conditions</strong> when not yet accepted.
+</p>
+<h3>Authentication</h3>
+<pre><code>x-client-key: &lt;YOUR_CLIENT_KEY&gt;</code></pre>
+<div class="meta">
+<span class="pill">Audit</span>
+<span class="pill">Idempotente by contentId</span>
+</div>
+<h3>Parameters</h3>
+<table>
+<thead>
+<tr><th>Local</th><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>path</td><td>id</td><td>uuid</td><td>sim</td><td>AccountId.</td></tr>
+<tr><td>header</td><td>x-client-key</td><td>string</td><td>sim</td><td>client Key.</td></tr>
+<tr><td>header</td><td>Idempotency-Key</td><td>string</td><td>recomendado</td><td>Avoids duplicate acceptance.</td></tr>
+</tbody>
+</table>
+<h3>Request Body (JSON)</h3>
+<table>
+<thead>
+<tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>contentId</td><td>uuid</td><td>sim</td><td>ID of the Terms/Policies document to be accepted.</td></tr>
+<tr><td>acceptedAt</td><td>date-time</td><td>opcional</td><td>Time of acceptance (server-time used if absent).</td></tr>
+<tr><td>channel</td><td>string</td><td>opcional</td><td> acceptance Source (ex.: <code>app</code>, <code>web</code>).</td></tr>
+<tr><td>userAgent</td><td>string</td><td>opcional</td><td>User-Agent .</td></tr>
+<tr><td>ip</td><td>string</td><td>opcional</td><td>IP public.</td></tr>
+</tbody>
+</table>
+<h3>Request example</h3>
+<pre><code>curl -X POST "https://travelcashcustomurl.azurewebsites.net/api/cliente/b5e18fda-0c3d-4647-90b1-a3312b61a87e/terms/accept" \
+  -H "Content-Type: application/json" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;" \
+  -H "Idempotency-Key: e0b1e2f3-4a5b-6c7d-8e9f-101112131415" \
+  -d '{
+    "contentId": "9a1b2c3d-4e5f-6789-aaaa-bbbbccccdddd",
+    "channel": "web",
+    "userAgent": "Mozilla/5.0",
+    "ip": "203.0.113.10",
+    "version": "v3.2",
+    "metadata": { "locale": "pt-BR" }
+  }'</code></pre>
+<h3>Respostas</h3>
+<table>
+<thead><tr><th>Status</th><th>Condição</th><th>Example</th></tr></thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>Aceite registrado com sucesso.</td>
+<td><pre><code>{
+  "status": "accepted",
+  "confirmationId": "bbf2d7b4-7c65-4f27-9f2e-2af8a0b4e0a1",
+  "contentId": "9a1b2c3d-4e5f-6789-aaaa-bbbbccccdddd",
+  "acceptedAt": "2025-10-06T14:12:00Z"
+}</code></pre></td>
+</tr>
+<tr>
+<td>200</td>
+<td>Idempotente: aceite já existente para este <code>contentId</code> + cliente.</td>
+<td><pre><code>{
+  "status": "already_accepted",
+  "confirmationId": "bbf2d7b4-7c65-4f27-9f2e-2af8a0b4e0a1",
+  "acceptedAt": "2025-09-15T10:00:00Z"
+}</code></pre></td>
+</tr>
+<tr>
+<td>400</td>
+<td>Payload inválido.</td>
+<td><pre><code>{ "error": "invalid_request", "field": "contentId" }</code></pre></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Falta/erro de <code>x-client-key</code>.</td>
+<td><pre><code>{ "error": "unauthorized" }</code></pre></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Client ou conteúdo não encontrados.</td>
+<td><pre><code>{ "error": "not_found" }</code></pre></td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflito de versão do documento (ex.: versão desatualizada).</td>
+<td><pre><code>{ "error": "version_conflict", "required": "v3.2" }</code></pre></td>
+</tr>
+<tr>
+<td>500</td>
+<td>Erro inesperado.</td>
+<td><pre><code>{ "error": "internal_error" }</code></pre></td>
+</tr>
+</tbody>
+</table>
+<h3>Notas de implementação</h3>
+<ul>
+<li>Record audit: <em>accountId</em>, <em>contentId</em>, <em>acceptedAt</em>, IP, userAgent, channel, and version.</li>
+<li>Ensure idempotency by combining <em>accountId</em> + <em>contentId</em> (and optionally <em>version</em>).</li>
+<li>If the document requires a valid minimum version, validate and return <code>409 version_conflict</code>.</li>
+</ul>
+</section>
+<section id="env">
+<h2><span class="method GET">GET</span> /api/Public/environment</h2>
+<p>Returns information about the current environment and API status.</p>
+<pre><code>{
+  "environment": "Production",
+  "version": "v4.1.3",
+  "timestamp": "2025-10-06T14:00:00Z"
+}</code></pre>
+</section>
+<section id="pingpong">
+<h2><span class="method POST">POST</span> /api/Public/pingpong</h2>
+<p>Test communication with the environment and authentication verification.</p>
+<h3>Body (LoginApp)</h3>
+<pre><code>{
+  "login": "teste",
+  "password": "1234",
+  "timeoutInMinutes": 15,
+  "geolocation": "São Paulo, BR",
+  "devInfo": "Windows 11"
+}</code></pre>
+</section>
+<section id="queue">
+<h2><span class="method POST">POST</span> /api/Public/queue</h2>
+<p>Inserts an item into the asynchronous processing queue (e.g. cashback generation).</p>
+<pre><code>{
+  "clientUnit": "00000000-0000-0000-0000-000000000000",
+  "value": 199.90,
+  "indentificator": "TRX-20251006-001",
+  "userName": "Maria Silva",
+  "userMail": "maria@exemplo.com",
+  "userPhone": "+5511999998888",
+  "qualifier": {"canal": "web"},
+  "extraData": {"origem": "checkout"}
+}</code></pre>
+</section>
+<section id="models">
+<h2>Models</h2>
+<h3>LoginApp</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>login</td><td>string</td><td>User</td></tr>
+<tr><td>password</td><td>string</td><td>password</td></tr>
+<tr><td>timeoutInMinutes</td><td>number</td><td>Sessiontimeout</td></tr>
+<tr><td>geolocation</td><td>string</td><td>Location</td></tr>
+<tr><td>devInfo</td><td>string</td><td>Device's Information </td></tr>
+</tbody>
+</table>
+<h3>ProcQueueInsertRequest</h3>
+<table>
+<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>clientUnit</td><td>string</td><td>Client Unit</td></tr>
+<tr><td>value</td><td>number</td><td>Amount</td></tr>
+<tr><td>indentificator</td><td>string</td><td>UniqueIdentifier</td></tr>
+<tr><td>userName</td><td>string</td><td>User's Name</td></tr>
+<tr><td>userMail</td><td>string</td><td>User's Email</td></tr>
+<tr><td>userPhone</td><td>string</td><td>User's Phone</td></tr>
+<tr><td>qualifier</td><td>object</td><td>Additional Qualifiers </td></tr>
+<tr><td>extraData</td><td>object</td><td>Information extras</td></tr>
+</tbody>
+</table>
+</section>
+<div class="footer">
+        © 2025 TravelCash Cashback API – v4.1.3. Todos os direitos reservados.
+      </div>
+</main>
+</div>
+</section><section data-lang="pt" id="lang-pt">
 <div class="wrapper">
 <aside>
 <div class="brand">
@@ -98,19 +615,6 @@
 <pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/search?Email=ana@exemplo.com" \
   -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;"</code></pre>
 <h3>Resposta 200 (exemplo)</h3>
-<pre><code></code></pre>
-</section>
-<section id="client-balance">
-<h2><span class="method GET">GET</span> /api/client/{id}/balance</h2>
-<p>Retorna o saldo atual de cashback e o histórico completo de transações do cliente.</p>
-<table>
-<thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
-<tbody><tr><td>id</td><td>UUID</td><td>Sim</td><td>ID do cliente.</td></tr></tbody>
-</table>
-<h3>Exemplo de requisição</h3>
-<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/b5e18fda-0c3d-4647-90b1-a3312b61a87e/balance" \
-  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;"</code></pre>
-<h3>Resposta 200 (exemplo)</h3>
 <pre><code>[
   {
     "account": {
@@ -147,6 +651,99 @@
     }
   }
 ]</code></pre>
+</section>
+<section id="client-balance">
+<h2><span class="method GET">GET</span> /api/client/{id}/balance</h2>
+<p>Retorna o saldo atual de cashback e o histórico completo de transações do cliente.</p>
+<table>
+<thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrigatório</th><th>Descrição</th></tr></thead>
+<tbody><tr><td>id</td><td>UUID</td><td>Sim</td><td>ID do cliente.</td></tr></tbody>
+</table>
+<h3>Exemplo de requisição</h3>
+<pre><code>curl -X GET "https://travelcashcustomurl.azurewebsites.net/api/client/b5e18fda-0c3d-4647-90b1-a3312b61a87e/balance" \
+  -H "x-client-key: &lt;SEU_CLIENT_KEY&gt;"</code></pre>
+<h3>Resposta 200 (exemplo)</h3>
+<pre><code>
+  {
+  "accountDetails": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "ARTUR OLIVEIRA",
+    "email": "artur@gmail.com",
+    "phoneNumber": "5585999999999",
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "creationTime": "0001-01-01T00:00:00+00:00",
+    "updateTime": "0001-01-01T00:00:00+00:00",
+    "validEmail": false,
+    "validPhoneNumber": false
+  },
+  "account": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "legalId": "000000000000",
+    "status": 1,
+    "type": "",
+    "creationTime": "2024-11-11T01:38:15.363123+00:00",
+    "updateTime": "2025-08-24T10:46:25.5028337+00:00",
+    "countryId": "69518c70-d652-4408-9c69-c2858c83264c",
+    "lastAccessTime": "2025-10-06T16:59:08.0692981+00:00",
+    "notshowtravelcard": true,
+    "lastActivity": "2025-10-06T17:30:37.255845+00:00",
+    "expireDays": 365
+  },
+  "balance": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "available": 0,
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "creationTime": "0001-01-01T00:00:00+00:00",
+    "accumulation": 1095.13,
+    "spentPoints": 1095.13
+  },
+  "setups": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "accountId": "00000000-0000-0000-0000-000000000000",
+    "defaultCurrencyId": "c3c04389-ccf9-4aaa-8e2d-fba68eea58f8",
+    "defaultCountryId": "69518c70-d652-4408-9c69-c2858c83264c",
+    "lang": "pt-BR",
+    "notificationByEmail": true,
+    "notificationByPhone": true,
+    "notificationByPush": true,
+    "notificationByWhatsapp": true,
+    "defaultChannel": "0",
+    "currency": {
+      "id": "c3c04389-ccf9-4aaa-8e2d-fba68eea58f8",
+      "name": "Brazilian Real",
+      "code": "BRL",
+      "symbol": "R$",
+      "creationTime": "2024-01-26T16:51:22.714487+00:00",
+      "updateTime": "2025-10-06T17:30:01.4298737+00:00",
+      "currentExchangeRate": 5.31,
+      "exchangeRateUpdateTime": "2025-10-06T17:30:01.4248155+00:00"
+    }
+  },
+  "polices": [
+    {
+      "contentId": "84f5d9fa-efbb-49f1-97b7-f876092bba17",
+      "title": "Termos e Condições",
+      "description": "Termos e condições - pt-br",
+      "richText": "<p>...</p>",
+      "isActive": true,
+      "publishDate": "2024-09-30T04:59:04.243",
+      "contentType": 2,
+      "requiresReadConfirmation": true,
+      "language": "pt-BR",
+      "children": [],
+      "readed": true,
+      "contentReadConfirmation": {
+        "confirmationId": "2ab1f508-8dc0-49ca-93b2-932e47c01882",
+        "contentId": "84f5d9fa-efbb-49f1-97b7-f876092bba17",
+        "accountId": "00000000-0000-0000-0000-000000000000",
+        "confirmationDate": "2024-12-10T15:10:48.433"
+      }
+    }
+  ],
+  "result": true,
+  "message": "OK",
+  "status": 0
+}</code></pre>
 </section>
 <section id="cliente-debito">
 <h2><span class="method POST">POST</span> /api/cliente/{id}/cashback/Debit</h2>
@@ -467,5 +1064,4 @@
       </div>
 </main>
 </div>
-</body>
-</html>
+</section></body></html>
