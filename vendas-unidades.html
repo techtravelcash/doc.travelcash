@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Vendas Unidades - TravelCash</title>
+    <style>
+        :root {
+          --bg: #0b1020;
+          --panel: #0f152b;
+          --muted: #9fb0d0;
+          --text: #e8eeff;
+          --accent: #61dafb;
+          --border: #223058;
+          --code: #0a0f1d;
+          --shadow: 0 8px 24px rgba(3,7,18,.35);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+        .wrapper { display:grid; grid-template-columns: 300px 1fr; min-height:100vh; }
+        aside { background:linear-gradient(180deg,#0c1226,#0b1121); border-right:1px solid var(--border); padding:20px; position:sticky; top:0; height:100vh; }
+        main { padding:32px 40px 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .brand { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+        .brand img { height:36px; }
+        .nav h4 { color:#bcd0ff; opacity:.9; margin:20px 0 8px; }
+        .nav a { display:block; padding:10px; border-radius:8px; color:var(--muted); text-decoration:none; margin-bottom:4px; }
+        .nav a:hover { background:#0d1430; color:var(--text); }
+        
+        .waiting-container { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 60px; box-shadow: var(--shadow); max-width: 600px; }
+        .loader { border: 4px solid var(--border); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 2s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        h1 { color: var(--accent); margin-bottom: 10px; }
+        p { color: var(--muted); margin-bottom: 30px; line-height: 1.6; }
+        .btn-back { background: var(--accent); color: var(--bg); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-back:hover { opacity: 0.8; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <aside>
+            <div class="brand">
+                <img alt="TravelCash Logo" src="https://manager.travelcash.me/dist/img/home/logo-inteiro.png"/>
+            </div>
+            <nav class="nav">
+                <h4>Navegação</h4>
+                <a href="index.html">← Voltar ao Hub</a>
+            </nav>
+        </aside>
+        <main>
+            <div class="waiting-container">
+                <div class="loader"></div>
+                <h1>Em Construção</h1>
+                <p>A documentação da <strong>API de Vendas das Unidades</strong> está sendo finalizada pela nossa equipe de engenharia. <br>Em breve, você terá acesso aos endpoints de recebimento de dados de PDV e transações.</p>
+                <a href="index.html" class="btn-back">Voltar ao Início</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
