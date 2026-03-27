@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>TravelCash - Generic Integration Documentation</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #0f152b;
+            --muted: #9fb0d0;
+            --text: #e8eeff;
+            --accent: #61dafb;
+            --accent2: #7ef4c4;
+            --border: #223058;
+            --code: #0a0f1d;
+            --shadow: 0 8px 24px rgba(3,7,18,.35);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Inter, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+
+        aside {
+            background: linear-gradient(180deg,#0c1226,#0b1121);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: auto;
+        }
+
+        main {
+            padding: 32px 40px 96px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+            .brand img {
+                height: 36px;
+            }
+
+        .lang-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            border: 1px solid var(--border);
+            background: #0a0f1d;
+            color: var(--muted);
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all .2s ease;
+        }
+
+            .lang-btn:hover {
+                color: var(--text);
+                border-color: #35508f;
+            }
+
+            .lang-btn.active {
+                background: linear-gradient(180deg,#111a3b,#0f1733);
+                color: var(--text);
+                border-color: #4b6ec2;
+            }
+
+        .nav h4 {
+            color: #bcd0ff;
+            opacity: .9;
+            margin: 20px 0 8px;
+        }
+
+        .nav a {
+            display: block;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+            .nav a:hover {
+                background: #0d1430;
+                color: var(--text);
+            }
+
+            .nav a.active {
+                background: linear-gradient(180deg,#111a3b,#0f1733);
+                color: var(--text);
+            }
+
+        section {
+            background: linear-gradient(180deg,#0f152b,#0d142a);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 36px;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text);
+            margin-top: 20px;
+        }
+
+        .method {
+            font-weight: bold;
+        }
+
+        .GET {
+            color: #7ee787;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        th {
+            color: #bcd0ff;
+            text-align: left;
+        }
+
+        pre, code {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            overflow: auto;
+            display: block;
+            margin-top: 8px;
+            color: #d3e3ff;
+            margin-bottom: 10px;
+        }
+
+        .pill {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 12px;
+            color: #cde0ff;
+            background: #0a0f1d;
+            font-size: 14px;
+        }
+
+        .rule-box {
+            border-left: 4px solid var(--accent);
+            background: rgba(97, 218, 251, 0.05);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .footer {
+            opacity: .7;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .required {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .lang {
+            display: none;
+        }
+
+            .lang.active {
+                display: block;
+            }
+
+        @media (max-width: 960px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            aside {
+                position: relative;
+                height: auto;
+            }
+
+            main {
+                padding: 24px 20px 72px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <aside>
+            <div class="brand">
+                <a href="index.html"><img alt="TravelCash Logo" src="https://manager.travelcash.me/dist/img/home/logo-inteiro.png" /></a>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="setLanguage('en')" id="btn-en">EN</button>
+                    <button class="lang-btn" onclick="setLanguage('pt')" id="btn-pt">PT</button>
+                </div>
+            </div>
+
+            <div class="lang active" data-lang="en">
+                <nav class="nav">
+                    <h4>Data Integration</h4>
+                    <a href="#objective">Objective</a>
+                    <a href="#rules">Cashback Rules</a>
+                    <a href="#mapping">Unit Mapping</a>
+                    <a href="#endpoint">Synchronization Endpoint</a>
+                    <a href="#model">Data Model</a>
+                </nav>
+            </div>
+
+            <div class="lang" data-lang="pt">
+                <nav class="nav">
+                    <h4>Integração de Dados</h4>
+                    <a href="#objetivo">Objetivo</a>
+                    <a href="#regras">Regras de Cashback</a>
+                    <a href="#mapeamento">Mapeamento de Unidades</a>
+                    <a href="#endpoint-pt">Endpoint de Sincronia</a>
+                    <a href="#modelo">Modelo de Dados</a>
+                </nav>
+            </div>
+        </aside>
+
+        <main>
+            <div class="lang active" data-lang="en">
+                <section id="objective">
+                    <h1>Reservation Integration: [PARTNER_NAME] <span class="pill">v1.2 - Generic</span></h1>
+                    <p>This documentation establishes the technical standard for hotel chains or partners to provide reservation data to the <strong>TravelCash</strong> cashback processing engine.</p>
+                </section>
+
+                <section id="rules">
+                    <h2>Business Rules (Cashback Logic)</h2>
+                    <p>The TravelCash system applies cashback and subsidy percentages based on <strong>Source</strong> and <strong>Campaign</strong> triggers. Below is an example of the current rule structure:</p>
+
+                    <div class="rule-box">
+                        <strong>Rule Example: Direct</strong><br>
+                        <strong>Source Trigger:</strong> "Own Website", "Reservation Center", "Engine X"<br>
+                        <strong>Campaign Trigger:</strong> "SUMMER2026"<br>
+                        <strong>Result:</strong> [X]% Cashback | [Y]% Partner Subsidy
+                    </div>
+                </section>
+
+                <section id="mapping">
+                    <h2>Unit Mapping</h2>
+                    <p>If the endpoint is centralized for the entire chain, the hotel identifier field must allow internal mapping. The partner must list the available units:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Unit Name (Display)</th>
+                                <th>ID/Slug for Integration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>[Example Unit 01]</td><td><code>unit_01_slug</code></td></tr>
+                            <tr><td>[Example Unit 02]</td><td><code>unit_02_slug</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="endpoint">
+                    <h2>Endpoint Request</h2>
+                    <p>TravelCash will consume a REST API via the <code>GET</code> method for periodic synchronization.</p>
+                    <p><span class="method GET">GET</span> <code>/api/[sync_route]</code></p>
+                    <p><strong>Required Filter Parameters:</strong></p>
+                    <ul>
+                        <li><strong>Start Date:</strong> Start filter based on checkout date.</li>
+                        <li><strong>End Date:</strong> End filter based on checkout date.</li>
+                    </ul>
+                </section>
+
+                <section id="model">
+                    <h2>Data Model Requirements (JSON)</h2>
+                    <p>Although property names may vary according to the partner's API, the data below is <strong>mandatory</strong> for cashback processing:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Required Field</th>
+                                <th>Type</th>
+                                <th>Req.</th>
+                                <th>System Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>Reservation ID</code></td><td>String</td><td><span class="required">Yes</span></td><td>Unique identifier to prevent duplication.</td></tr>
+                            <tr><td><code>Hotel ID</code></td><td>String</td><td><span class="required">Yes</span></td><td>Identifies which chain unit generated the reservation.</td></tr>
+                            <tr><td><code>Checkout Date</code></td><td>Date</td><td><span class="required">Yes</span></td><td>Checkout date (balance release trigger).</td></tr>
+                            <tr><td><code>Base Amount</code></td><td>Decimal</td><td><span class="required">Yes</span></td><td>Net amount over which the % will be applied.</td></tr>
+                            <tr><td><code>Source</code></td><td>String</td><td><span class="required">Yes</span></td><td>Validates whether the reservation is eligible (e.g. Website vs OTA).</td></tr>
+                            <tr><td><code>Campaign</code></td><td>String</td><td><span class="required">Yes</span></td><td>Defines the applied business rule.</td></tr>
+                            <tr><td><code>Customer Name</code></td><td>String</td><td><span class="required">Yes</span></td><td>Holder identification.</td></tr>
+                            <tr><td><code>Customer Email</code></td><td>String</td><td><span class="required">Yes</span></td><td><strong>Primary Key</strong> for TravelCash crediting.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Expected Payload Example</h3>
+                    <pre><code>[
+  {
+    "reservation_id": "999888",
+    "unit_key": "hotel_central_01",
+    "checkin_date": "2026-05-01",
+    "checkout_date": "2026-05-05",
+    "daily_rate_amount": 1500.50,
+    "source_channel": "Official Website",
+    "campaign_tag": "MAY_PROMO",
+    "customer_name": "Fabio Rocha",
+    "customer_email": "fabio@email.com",
+    "customer_tax_id": "12345678900"
+  }
+]</code></pre>
+                </section>
+            </div>
+
+            <div class="lang" data-lang="pt">
+                <section id="objetivo">
+                    <h1>Integração de Reservas: [NOME_DO_PARCEIRO] <span class="pill">v1.2 - Generic</span></h1>
+                    <p>Esta documentação estabelece o padrão técnico para que redes hoteleiras ou parceiros disponibilizem dados de reservas para o motor de processamento de cashback da <strong>TravelCash</strong>.</p>
+                </section>
+
+                <section id="regras">
+                    <h2>Regras de Negócio (Lógica de Cashback)</h2>
+                    <p>O sistema TravelCash aplica porcentagens de cashback e subsídio baseando-se em gatilhos de <strong>Origem</strong> e <strong>Campanha</strong>. Abaixo, o exemplo da estrutura de regras vigente:</p>
+
+                    <div class="rule-box">
+                        <strong>Exemplo de Regra: Direta</strong><br>
+                        <strong>Gatilho Origem:</strong> "Site Próprio", "Central de Reservas", "Motor X"<br>
+                        <strong>Gatilho Campanha:</strong> "VERAO2026"<br>
+                        <strong>Resultado:</strong> [X]% Cashback | [Y]% Subsídio Parceiro
+                    </div>
+                </section>
+
+                <section id="mapeamento">
+                    <h2>Mapeamento de Unidades (De-Para)</h2>
+                    <p>Se o endpoint for centralizado para toda a rede, o campo identificador do hotel deve permitir o mapeamento interno. O parceiro deve listar as unidades disponíveis:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome da Unidade (Exibição)</th>
+                                <th>ID/Slug para Integração</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>[Unidade Exemplo 01]</td><td><code>unidade_01_slug</code></td></tr>
+                            <tr><td>[Unidade Exemplo 02]</td><td><code>unidade_02_slug</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="endpoint-pt">
+                    <h2>Solicitação de Endpoint</h2>
+                    <p>A TravelCash consumirá uma API REST via método <code>GET</code> para sincronização periódica.</p>
+                    <p><span class="method GET">GET</span> <code>/api/[rota_de_sincronia]</code></p>
+                    <p><strong>Parâmetros Obrigatórios para Filtro:</strong></p>
+                    <ul>
+                        <li><strong>Data Inicial:</strong> Filtro de início baseado na data de checkout.</li>
+                        <li><strong>Data Final:</strong> Filtro de fim baseado na data de checkout.</li>
+                    </ul>
+                </section>
+
+                <section id="modelo">
+                    <h2>Requisitos do Modelo de Dados (JSON)</h2>
+                    <p>Embora os nomes das propriedades possam variar conforme a API do parceiro, os dados abaixo são <strong>mandatórios</strong> para o lançamento do cashback:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campo Requerido</th>
+                                <th>Tipo</th>
+                                <th>Obrig.</th>
+                                <th>Função no Sistema</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>ID Reserva</code></td><td>String</td><td><span class="required">Sim</span></td><td>Identificador único para evitar duplicidade.</td></tr>
+                            <tr><td><code>ID Hotel</code></td><td>String</td><td><span class="required">Sim</span></td><td>Identifica qual unidade da rede gerou a reserva.</td></tr>
+                            <tr><td><code>Data Saída</code></td><td>Date</td><td><span class="required">Sim</span></td><td>Data de checkout (Gatilho de liberação do saldo).</td></tr>
+                            <tr><td><code>Valor Base</code></td><td>Decimal</td><td><span class="required">Sim</span></td><td>Valor líquido sobre o qual o % incidirá.</td></tr>
+                            <tr><td><code>Origem</code></td><td>String</td><td><span class="required">Sim</span></td><td>Valida se a reserva é elegível (Ex: Site vs OTA).</td></tr>
+                            <tr><td><code>Campanha</code></td><td>String</td><td><span class="required">Sim</span></td><td>Define a regra de negócio aplicada.</td></tr>
+                            <tr><td><code>Nome Cliente</code></td><td>String</td><td><span class="required">Sim</span></td><td>Identificação do titular.</td></tr>
+                            <tr><td><code>Email Cliente</code></td><td>String</td><td><span class="required">Sim</span></td><td><strong>Chave Primária</strong> para crédito da TravelCash.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Exemplo de Payload Esperado</h3>
+                    <pre><code>[
+  {
+    "reserva_id": "999888",
+    "unidade_chave": "hotel_central_01",
+    "data_checkin": "2026-05-01",
+    "data_checkout": "2026-05-05",
+    "valor_diarias": 1500.50,
+    "canal_origem": "Site Oficial",
+    "campanha_tag": "PROMO_MAIO",
+    "cliente_nome": "Fabio Rocha",
+    "cliente_email": "fabio@email.com",
+    "cliente_cpf": "12345678900"
+  }
+]</code></pre>
+                </section>
+            </div>
+
+            <div class="footer">
+                © 2026 TravelCash - Cashback Synchronization and Processing Hub
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function setLanguage(lang) {
+            document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll(`.lang[data-lang="${lang}"]`).forEach(el => el.classList.add('active'));
+
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
+
+            document.documentElement.lang = lang;
+
+            if (lang === 'pt') {
+                document.title = 'TravelCash - Documentação Genérica de Integração';
+                if (window.location.hash === '#objective') window.location.hash = '#objetivo';
+                if (window.location.hash === '#rules') window.location.hash = '#regras';
+                if (window.location.hash === '#mapping') window.location.hash = '#mapeamento';
+                if (window.location.hash === '#endpoint') window.location.hash = '#endpoint-pt';
+                if (window.location.hash === '#model') window.location.hash = '#modelo';
+            } else {
+                document.title = 'TravelCash - Generic Integration Documentation';
+                if (window.location.hash === '#objetivo') window.location.hash = '#objective';
+                if (window.location.hash === '#regras') window.location.hash = '#rules';
+                if (window.location.hash === '#mapeamento') window.location.hash = '#mapping';
+                if (window.location.hash === '#endpoint-pt') window.location.hash = '#endpoint';
+                if (window.location.hash === '#modelo') window.location.hash = '#model';
+            }
+        }
+    </script>
+</body>
+</html>
