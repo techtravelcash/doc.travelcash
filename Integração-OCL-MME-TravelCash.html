@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>MME & TravelCash - Documentação de Integração API</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #0f152b;
+            --muted: #9fb0d0;
+            --text: #e8eeff;
+            --accent: #61dafb;
+            --accent2: #7ef4c4;
+            --border: #223058;
+            --code: #0a0f1d;
+            --shadow: 0 8px 24px rgba(3,7,18,.35);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.6;
+        }
+        .wrapper { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+        aside {
+            background: #0c1226; border-right: 1px solid var(--border);
+            padding: 20px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+        }
+        main { padding: 32px 40px; }
+        .brand img { height: 45px; margin-bottom: 20px; }
+        nav h4 { color: var(--accent2); margin-top: 25px; font-size: 0.9em; text-transform: uppercase; }
+        nav a {
+            display: block; padding: 10px; color: var(--muted);
+            text-decoration: none; border-radius: 8px; margin-bottom: 5px; font-size: 0.95em;
+        }
+        nav a:hover { background: #111a3b; color: var(--text); }
+        section {
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px; margin-bottom: 36px;
+            box-shadow: var(--shadow);
+        }
+        h1, h2, h3 { color: var(--text); }
+        .method { font-weight: bold; margin-right: 8px; }
+        .POST { color: #61dafb; }
+        .GET { color: #7ef4c4; }
+        pre {
+            background: var(--code); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; overflow-x: auto; color: #d3e3ff;
+            font-size: 0.9em;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { color: var(--muted); background: rgba(255,255,255,0.05); }
+        .pill {
+            background: #223058; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.8em; color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <aside>
+            <div class="brand">
+                <img src="https://manager.travelcash.me/dist/img/home/logo-inteiro.png" alt="TravelCash">
+            </div>
+            <nav>
+                <h4>Integração MME</h4>
+                <a href="#intro">Introdução</a>
+                <a href="#cenarios">Cenário e Evolução</a>
+                <a href="#unidades">Unidades do Grupo</a>
+                <a href="#credenciais">Credenciais</a>
+                <a href="#auth">Autenticação</a>
+                <a href="#payload">Payload OCL (Mapeamento)</a>
+                <a href="#exemplo">Exemplo de Envio</a>
+            </nav>
+        </aside>
+        <main>
+            <section id="intro">
+                <h1>Integração de Vendas MME <span class="pill">v4.2</span></h1>
+                <p>Este documento orienta o desenvolvimento da <strong>OCL</strong> para o envio automático de vendas para a TravelCash. 
+                Os dados enviados alimentarão o ecossistema de cashback para os hóspedes do grupo MME.</p>
+            </section>
+
+            <section id="cenarios">
+                <h1>Evolução Tecnológica MME</h1>
+                <p>Esta nova etapa da parceria entre <strong>MME</strong> e <strong>TravelCash</strong> visa modernizar o tráfego de dados, substituindo o processamento baseado em arquivos por uma arquitetura orientada a eventos via API.</p>
+                
+                <div class="comparison">
+                    <div class="card">
+                        <h4>Cenário Atual (SFTP/Blob)</h4>
+                        <p style="font-size: 0.9em; color: var(--muted);">Os dados são exportados em arquivos para um servidor SFTP (Azure Blobs), onde um sincronizador realiza a leitura periódica.</p>
+                        <ul style="font-size: 0.85em;">
+                            <li>Dependência de leitura de arquivos físicos.</li>
+                            <li>Delay entre a exportação e o processamento.</li>
+                            <li>Dificuldade de rastreio de erros pontuais.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-color: var(--accent);">
+                        <h4>Cenário Desejado (API Rest)</h4>
+                        <p style="font-size: 0.9em; color: var(--muted);">A <strong>OCL</strong> envia os dados diretamente para a API TravelCash, que insere as informações instantaneamente na fila de processamento.</p>
+                        <ul style="font-size: 0.85em;">
+                            <li><span class="benefit-tag">Performance:</span> Processamento em tempo real (Near Real-Time).</li>
+                            <li><span class="benefit-tag">Segurança:</span> Tráfego criptografado via HTTPS e chaves de cliente individuais.</li>
+                            <li><span class="benefit-tag">Integridade:</span> Validação imediata dos dados no ato do envio.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="unidades">
+                <h2>Unidades MME Habilitadas</h2>
+                <p>O sistema OCL deve identificar a qual unidade a reserva pertence e utilizar o <code>x-client-key</code> correspondente:</p>
+                <ul>
+                    <li>MME - Ipioca Beach Resort</li>
+                    <li>MME - Maceio Resort</li>
+                    <li>MME - Maceio Mar Hotel</li>
+                    <li>MME - Acqua Suites</li>
+                    <li>MME - Acqua Prime</li>
+                    <li>MME - Acqua Inn</li>
+                </ul>
+            </section>
+
+            <section id="credenciais">
+                <h2>Dados de Acesso - Rede MME</h2>
+                <p>Utilize as credenciais abaixo para autenticar as requisições da <strong>OCL</strong>. O <code>x-client-key</code> (Secret) deve ser enviado obrigatoriamente no Header de cada chamada.</p>
+
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: var(--accent);">🚀 Ambiente de Produção (MME)</h3>
+                    <p style="font-size: 0.9em; color: var(--muted);">URL Base: <code>https://travelcash-mme.azurewebsites.net/api/Public/queue</code></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Unit Name</th>
+                                <th>Unit Code</th>
+                                <th>x-client-key (Header Secret)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>51</td>
+                                <td><strong>MME - Ipioca Beach Resort</strong></td>
+                                <td>MMEIBR</td>
+                                <td><code>10361d1d-453c-4873-baef-d5efa5c4180b</code></td>
+                            </tr>
+                            <tr>
+                                <td>53</td>
+                                <td><strong>MME - Maceio Resort</strong></td>
+                                <td>MMEMR</td>
+                                <td><code>70cd1b87-16b6-4393-8b38-b0ef43d77b18</code></td>
+                            </tr>
+                            <tr>
+                                <td>52</td>
+                                <td><strong>MME - Maceio Mar Hotel</strong></td>
+                                <td>MMEMMH</td>
+                                <td><code>f12577ed-3b7f-44fc-8783-f04b31653dd3</code></td>
+                            </tr>
+                            <tr>
+                                <td>50</td>
+                                <td><strong>MME - Acqua Suites</strong></td>
+                                <td>MMEAS</td>
+                                <td><code>274d4eb9-74ea-4257-b213-622e1b8845e3</code></td>
+                            </tr>
+                            <tr>
+                                <td>27</td>
+                                <td><strong>MME - Acqua Prime</strong></td>
+                                <td>MMEAP</td>
+                                <td><code>c554d66c-976b-4e5f-876d-dfddc006e1d3</code></td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td><strong>MME - Acqua Inn</strong></td>
+                                <td>MMEAI</td>
+                                <td><code>a4cc4dde-d4e8-4564-832f-0ad08eb1d7ce</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed var(--border); margin: 40px 0;">
+
+                <div>
+                    <h3 style="color: var(--accent2);">🧪 Ambiente de Homologação (Stage)</h3>
+                    <p style="font-size: 0.9em; color: var(--muted);">URL Base: <code>https://mme-stg.azurewebsites.net/api/Public/queue</code></p>
+                    <p style="font-size: 0.85em;">Para testes na OCL, utilize a chave de homologação única abaixo:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ambiente</th>
+                                <th>UnitCode</th>
+                                <th>x-client-key (Sandbox)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>MME STAGE ALL</strong></td>
+                                <td>MME-STG</td>
+                                <td><code>STG-MME-Z9K8nP2R3H0XJ5C4A7FQ6BMDLs1vw</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="margin-top: 25px; border-left: 4px solid var(--accent);">
+                    <p style="font-size: 0.85em; color: var(--muted);">
+                        Cada requisição POST deve apontar para o <code>x-client-key</code> da unidade onde a reserva foi realizada (conforme o campo "Hotel" no arquivo de origem). O envio para a chave incorreta resultará no crédito do cashback para a unidade errada.
+                    </p>
+                </div>
+            </section>
+
+            <section id="auth">
+                <h2>Autenticação</h2>
+                <p>A API utiliza autenticação por chave de cliente no Header:</p>
+                <pre><code>x-client-key: &lt;CHAVE_ESPECIFICA_DA_UNIDADE&gt;
+Content-Type: application/json</code></pre>
+            </section>
+
+            <section id="payload">
+                <h2>Mapeamento de Dados (OCL → TravelCash)</h2>
+                <p>Abaixo, como os campos enviados pela OCL devem ser mapeados para a nossa API:</p>
+                <table>
+                    <thead>
+                        <tr><th>Campo API</th><th>Campo MME (CSV/OCL)</th><th>Descrição</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>value</code></td><td>diaria_total</td><td>Valor bruto da venda (Ex: 1185.00)</td></tr>
+                        <tr><td><code>identificator</code></td><td>numero</td><td>ID único da reserva/venda.</td></tr>
+                        <tr><td><code>userName</code></td><td>Nome Solicitante</td><td>Nome completo do hóspede.</td></tr>
+                        <tr><td><code>userMail</code></td><td>email_solicitante</td><td>E-mail para crédito do cashback.</td></tr>
+                        <tr><td><code>userPhone</code></td><td>Telefone Solicitante</td><td>Telefone com DDD.</td></tr>
+                        <tr><td><code>checkoutTime</code></td><td>data_saida</td><td>Data do checkout (ISO 8601).</td></tr>
+                    </tbody>
+                </table>
+                <p><strong>Campos em <code>extraData</code>:</strong> Segmento, Código Tarifa, Data Chegada, Origem e CampanhaTC devem ser enviados dentro do objeto JSON <code>extraData</code>.</p>
+            </section>
+
+            <section id="exemplo">
+                <h2><span class="method POST">POST</span> /api/Public/queue</h2>
+                <p>Exemplo de payload baseado nos dados reais do hotel <strong>Acqua Inn</strong>:</p>
+                <pre><code>{
+  "value": 948.00,
+  "identificator": "266939",
+  "userName": "Layane Carneiro de Oliveira",
+  "userMail": "operacoes@onfly.com.br",
+  "userPhone": "71991597983",
+  "checkoutTime": "2026-03-20T12:00:00",
+  "qualifier": {
+    "hotel": "acqua_inn",
+    "origem": "AGENCIA CORPORATIVA",
+    "segmento": "Ind Agencia Corporativa"
+  },
+  "extraData": {
+    "data_chegada": "2026-03-16",
+    "codigo_tarifa": "MIGRAR",
+    "nome_fantasia_origem": "ONFLY S.A",
+    "campanhatc": "Novo",
+    "data_reserva": "2026-02-07"
+  }
+}</code></pre>
+            </section>
+
+            <div style="text-align: center; margin-top: 50px; opacity: 0.6; font-size: 0.8em;">
+                © 2026 TravelCash – Documentação Técnica Especial para Grupo MME & OCL.
+            </div>
+        </main>
+    </div>
+</body>
+</html>
