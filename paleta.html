@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TravelBACK - Complete Brand System & Assets</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- SweetAlert2 para notificações visuais elegantes -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            /* Primary / Main Brand Palette */
+            --primary-violet-900: #1a0f4a;
+            --primary-violet-800: #241569;
+            --primary-violet-700: #3a1fb8;
+            --primary-violet-600: #5b3fe4;
+            --primary-violet-500: #7c5cff;
+            --primary-violet-100: #e8e1ff;
+            --primary-mint: #7ff5c5;
+            --primary-mint-dark: #4fd9a3;
+            --primary-cream: #f2efe9;
+            --primary-cream-dark: #e8e4dc;
+            --primary-coral: #ee6e5f;
+            --primary-coral-soft: #fde9e6;
+
+            /* Secondary Palette */
+            --secondary-purple-100: #878196;
+            --secondary-purple-200: #5F5673;
+            --secondary-purple-300: #0F022D;
+            --secondary-neutral-light: #EEEEF0;
+            --secondary-gray-light: #B7B8BB;
+            --secondary-gray-mid: #6E6F70;
+            --secondary-gray-dark: #5F5673;
+            --secondary-mint-100: #B6F5E5;
+            --secondary-mint-200: #6CEBCA;
+            --secondary-mint-300: #85EED3;
+            --secondary-yellow-100: #F5ECB6;
+            --secondary-yellow-200: #FCEFA3;
+            --secondary-yellow-300: #F9E87F;
+            --secondary-yellow-400: #EBD86C;
+            --secondary-coral-100: #F89E9E;
+            --secondary-coral-200: #F98888;
+            --secondary-coral-400: #F03D3D;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: var(--primary-cream);
+            color: var(--primary-violet-900);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .info-section .top-brand-logo {
+            display: block;
+            height: 28px;
+            width: auto;
+            color: var(--primary-violet-900);
+            fill: currentColor;
+            margin-bottom: 24px;
+        }
+
+        .info-section h1 {
+            font-size: 38px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .info-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #3a3a52;
+            margin-bottom: 20px;
+        }
+
+        .instruction-badge {
+            display: inline-block;
+            background: var(--primary-violet-900);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .palette-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .palette-group {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(12, 10, 43, 0.04);
+            border: 1px solid rgba(12, 10, 43, 0.08);
+        }
+
+        .group-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary-violet-600);
+            margin-bottom: 12px;
+        }
+
+        .palette-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .assets-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .color-card {
+            height: 90px;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            font-size: 12px;
+            font-weight: 600;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .asset-card {
+            background: #faf8f5;
+            border: 1px solid #e8e4dc;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+
+        .color-card:hover, .asset-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(12, 10, 43, 0.12);
+            border-color: var(--primary-violet-500);
+        }
+
+        .color-card span.name, .asset-card span.name {
+            font-size: 10px;
+            opacity: 0.85;
+            font-weight: 400;
+            margin-bottom: 2px;
+        }
+
+        .asset-card .preview-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            margin-bottom: 8px;
+            color: var(--primary-violet-900);
+            fill: currentColor;
+        }
+
+        .asset-card svg {
+            max-height: 36px;
+            width: auto;
+        }
+
+        .asset-card .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-violet-900);
+        }
+
+        /* Classes de Cores Primárias da Homepage */
+        .c-pv900 { background-color: #1a0f4a; color: #fff; }
+        .c-pv800 { background-color: #241569; color: #fff; }
+        .c-pv700 { background-color: #3a1fb8; color: #fff; }
+        .c-pv600 { background-color: #5b3fe4; color: #fff; }
+        .c-pv500 { background-color: #7c5cff; color: #fff; }
+        .c-pv100 { background-color: #e8e1ff; color: #1a0f4a; }
+        .c-pmint { background-color: #7ff5c5; color: #1a0f4a; }
+        .c-pmintdk { background-color: #4fd9a3; color: #1a0f4a; }
+        .c-pcream { background-color: #f2efe9; color: #1a0f4a; border: 1px solid #dcd8d0; }
+        .c-pcreamdk { background-color: #e8e4dc; color: #1a0f4a; }
+        .c-pcoral { background-color: #ee6e5f; color: #fff; }
+        .c-pcoralsft { background-color: #fde9e6; color: #ee6e5f; }
+
+        /* Classes de Cores Secundárias */
+        .c-p1 { background-color: #878196; color: #fff; }
+        .c-p2 { background-color: #5F5673; color: #fff; }
+        .c-p3 { background-color: #0F022D; color: #fff; }
+
+        .c-n1 { background-color: #EEEEF0; color: #000; border: 1px solid #dcdcdc; }
+        .c-n2 { background-color: #B7B8BB; color: #000; }
+        .c-n3 { background-color: #6E6F70; color: #fff; }
+        .c-n4 { background-color: #5F5673; color: #fff; }
+
+        .c-m1 { background-color: #B6F5E5; color: #000; }
+        .c-m2 { background-color: #6CEBCA; color: #000; }
+        .c-m3 { background-color: #85EED3; color: #000; }
+
+        .c-y1 { background-color: #F5ECB6; color: #000; }
+        .c-y2 { background-color: #FCEFA3; color: #000; }
+        .c-y3 { background-color: #F9E87F; color: #000; }
+        .c-y4 { background-color: #EBD86C; color: #000; }
+
+        .c-c1 { background-color: #F89E9E; color: #000; }
+        .c-c2 { background-color: #F98888; color: #fff; }
+        .c-c4 { background-color: #F03D3D; color: #fff; }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .palette-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .assets-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Definição dos SVGs oficiais -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="brand-logo" viewBox="0 0 310 43">
+          <path d="M0 5.62419V1.26758H30.4171V5.62419H17.6641V41.8237H12.753V5.62419H0Z"/>
+          <path d="M34.2044 41.8237V11.4066H38.7194V16.0009H39.0363C39.5907 14.4958 40.5941 13.2747 42.0463 12.3373C43.4985 11.4 45.1355 10.9313 46.9574 10.9313C47.3006 10.9313 47.7297 10.9379 48.2446 10.9511C48.7594 10.9643 49.1489 10.9841 49.4129 11.0106V15.7632C49.2545 15.7236 48.8914 15.6642 48.3238 15.585C47.7693 15.4926 47.1818 15.4464 46.5613 15.4464C45.0827 15.4464 43.7625 15.7566 42.6008 16.3771C41.4522 16.9844 40.5413 17.8293 39.868 18.9119C39.2079 19.9812 38.8778 21.2024 38.8778 22.5754V41.8237H34.2044Z"/>
+          <path d="M63.9036 42.5366C61.9761 42.5366 60.2269 42.1735 58.6559 41.4474C57.0848 40.7081 55.8373 39.6454 54.9131 38.2592C53.989 36.8598 53.5269 35.17 53.5269 33.1897C53.5269 31.447 53.8702 30.0344 54.5567 28.9519C55.2432 27.8561 56.1607 26.998 57.3093 26.3775C58.4578 25.757 59.7252 25.295 61.1114 24.9913C62.5108 24.6745 63.9168 24.4236 65.3294 24.2388C67.1777 24.0012 68.6761 23.823 69.8246 23.7041C70.9864 23.5721 71.8313 23.3543 72.3594 23.0506C72.9007 22.747 73.1713 22.2189 73.1713 21.4664V21.308C73.1713 19.3541 72.6366 17.8359 71.5673 16.7534C70.5111 15.6708 68.9071 15.1295 66.7552 15.1295C64.5241 15.1295 62.7749 15.618 61.5075 16.5949C60.2401 17.5719 59.349 18.6148 58.8341 19.7238L54.3983 18.1396C55.1904 16.2913 56.2465 14.8523 57.5667 13.8225C58.9001 12.7796 60.3523 12.0535 61.9233 11.6442C63.5076 11.2218 65.0654 11.0106 66.5968 11.0106C67.5737 11.0106 68.6959 11.1294 69.9633 11.367C71.2438 11.5914 72.4782 12.0601 73.6664 12.773C74.8678 13.4859 75.8645 14.5619 76.6566 16.0009C77.4487 17.4399 77.8448 19.3673 77.8448 21.7833V41.8237H73.1713V37.7047H72.9337C72.6168 38.3648 72.0888 39.0711 71.3495 39.8236C70.6102 40.5761 69.6266 41.2164 68.3988 41.7445C67.1711 42.2726 65.6727 42.5366 63.9036 42.5366ZM64.6165 38.3384C66.4648 38.3384 68.0226 37.9754 69.29 37.2493C70.5705 36.5232 71.5343 35.5858 72.1812 34.4373C72.8413 33.2887 73.1713 32.0807 73.1713 30.8133V26.5359C72.9733 26.7736 72.5376 26.9914 71.8643 27.1894C71.2042 27.3743 70.4385 27.5393 69.5672 27.6845C68.7091 27.8165 67.8708 27.9353 67.0523 28.041C66.2469 28.1334 65.5935 28.2126 65.0918 28.2786C63.8772 28.437 62.7418 28.6944 61.6857 29.0509C60.6427 29.3941 59.7978 29.9156 59.1509 30.6153C58.5173 31.3018 58.2004 32.2391 58.2004 33.4273C58.2004 35.0511 58.8011 36.2789 60.0025 37.1106C61.217 37.9291 62.7551 38.3384 64.6165 38.3384Z"/>
+          <path d="M110.158 11.4066L98.91 41.8237H94.1573L82.9093 11.4066H87.9789L96.3752 35.6452H96.6921L105.088 11.4066H110.158Z"/>
+          <path d="M127.99 42.4574C125.06 42.4574 122.531 41.8105 120.406 40.5167C118.294 39.2097 116.663 37.3879 115.515 35.0511C114.379 32.7012 113.812 29.9684 113.812 26.8528C113.812 23.7371 114.379 20.9912 115.515 18.6148C116.663 16.2253 118.261 14.3638 120.307 13.0304C122.366 11.6838 124.769 11.0106 127.515 11.0106C129.099 11.0106 130.664 11.2746 132.208 11.8027C133.753 12.3307 135.159 13.1889 136.426 14.377C137.694 15.552 138.704 17.1098 139.456 19.0505C140.209 20.9912 140.585 23.3807 140.585 26.2191V28.1994H117.138V24.1596H135.832C135.832 22.4434 135.489 20.9119 134.803 19.5654C134.129 18.2188 133.166 17.156 131.911 16.3771C130.67 15.5982 129.205 15.2087 127.515 15.2087C125.654 15.2087 124.043 15.6708 122.683 16.5949C121.337 17.5059 120.3 18.694 119.574 20.1594C118.848 21.6248 118.485 23.1959 118.485 24.8725V27.5657C118.485 29.8628 118.881 31.8101 119.673 33.4075C120.479 34.9917 121.594 36.1997 123.02 37.0314C124.446 37.8499 126.103 38.2592 127.99 38.2592C129.218 38.2592 130.327 38.0876 131.317 37.7443C132.321 37.3879 133.185 36.8598 133.911 36.1601C134.638 35.4472 135.199 34.5627 135.595 33.5065L140.11 34.7739C139.634 36.3053 138.836 37.6519 137.714 38.8137C136.591 39.9622 135.205 40.86 133.555 41.5069C131.905 42.1405 130.05 42.4574 127.99 42.4574Z"/>
+          <path d="M152.368 1.26758V41.8237H147.694V1.26758H152.368Z"/>
+          <path d="M159.951 41.1106V0.554478H175.477C178.407 0.554478 180.843 1.01654 182.784 1.94067C184.738 2.8516 186.196 4.09918 187.16 5.6834C188.137 7.26762 188.626 9.06308 188.626 11.0698C188.626 12.72 188.309 14.1326 187.675 15.3076C187.041 16.4693 186.19 17.4133 185.121 18.1394C184.051 18.8655 182.856 19.3869 181.536 19.7038V20.0998C182.975 20.179 184.355 20.6213 185.675 21.4266C187.008 22.2187 188.098 23.3409 188.942 24.7931C189.787 26.2453 190.21 28.0011 190.21 30.0606C190.21 32.1597 189.702 34.0476 188.685 35.7242C187.668 37.3877 186.137 38.7013 184.091 39.665C182.044 40.6287 179.47 41.1106 176.368 41.1106H159.951ZM167.298 34.9717H175.199C177.866 34.9717 179.787 34.4635 180.962 33.4469C182.15 32.4172 182.744 31.097 182.744 29.4864C182.744 28.285 182.447 27.2024 181.853 26.2387C181.259 25.2618 180.414 24.4961 179.318 23.9416C178.223 23.3739 176.916 23.0901 175.397 23.0901H167.298V34.9717ZM167.298 17.8027H174.566C175.833 17.8027 176.975 17.5717 177.992 17.1096C179.008 16.6343 179.807 15.9677 180.388 15.1095C180.982 14.2382 181.279 13.2085 181.279 12.0203C181.279 10.4493 180.724 9.15549 179.615 8.13895C178.52 7.1224 176.889 6.61413 174.724 6.61413H167.298V17.8027Z"/>
+          <path d="M201.809 41.1106H193.967L208.245 0.554478H217.315L231.613 41.1106H223.771L212.938 8.87165H212.622L201.809 41.1106Z"/>
+          <path d="M269.763 14.2382H262.356C262.145 13.0236 261.756 11.9477 261.188 11.0104C260.62 10.0598 259.914 9.25451 259.069 8.59441C258.224 7.93432 257.26 7.43925 256.178 7.1092C255.109 6.76596 253.953 6.59433 252.712 6.59433C250.508 6.59433 248.554 7.14881 246.851 8.25776C245.148 9.35352 243.814 10.9641 242.851 13.0896C241.887 15.2019 241.405 17.7829 241.405 20.8325C241.405 23.935 241.887 26.5489 242.851 28.6744C243.828 30.7867 245.161 32.3842 246.851 33.4667C248.554 34.5361 250.501 35.0707 252.693 35.0707C253.907 35.0707 255.043 34.9123 256.099 34.5955C257.168 34.2654 258.125 33.7836 258.97 33.1499C259.828 32.5162 260.548 31.7373 261.129 30.8131C261.723 29.889 262.132 28.8329 262.356 27.6447L269.763 27.6843C269.485 29.6118 268.885 31.4204 267.961 33.1103C267.05 34.8001 265.855 36.2919 264.376 37.5857C262.898 38.8663 261.168 39.8696 259.188 40.5957C257.208 41.3086 255.01 41.6651 252.594 41.6651C249.029 41.6651 245.847 40.84 243.049 39.1897C240.25 37.5395 238.045 35.1566 236.434 32.0409C234.824 28.9253 234.019 25.1892 234.019 20.8325C234.019 16.4627 234.83 12.7266 236.454 9.62416C238.078 6.50852 240.289 4.12558 243.088 2.47535C245.887 0.825116 249.055 0 252.594 0C254.851 0 256.95 0.316844 258.891 0.950533C260.832 1.58422 262.561 2.51496 264.079 3.74273C265.597 4.9573 266.845 6.44911 267.822 8.21816C268.812 9.97401 269.459 11.9807 269.763 14.2382Z"/>
+          <path d="M276.491 41.1106V0.554478H283.837V19.1889H284.332L300.155 0.554478H309.126L293.442 18.7532L309.264 41.1106H300.432L288.333 23.7237L283.837 29.0309V41.1106H276.491Z"/>
+        </symbol>
+        <symbol id="brand-mark" viewBox="0 0 82 88">
+          <path d="M16.9569 87.6962H0L30.8735 0H50.4853L81.4016 87.6962H64.4447L41.022 17.9846H40.3368L16.9569 87.6962Z"/>
+          <path d="M41.0061 65.6836L58.949 87.6983H22.8203L41.0061 65.6836Z"/>
+        </symbol>
+      </defs>
+    </svg>
+
+    <div class="container">
+        <!-- Coluna de Texto à Esquerda com o Logo no Topo -->
+        <div class="info-section">
+            <svg class="top-brand-logo" viewBox="0 0 310 43" preserveAspectRatio="xMinYMid meet">
+                <use href="#brand-logo"/>
+            </svg>
+            <h1>Brand System & Assets</h1>
+            <p>Integrated system combining the core identity palette and official SVG vector assets from the TravelBACK platform interface.</p>
+            <p>Clique em qualquer cor ou logotipo para copiar instantaneamente o código hexadecimal ou o código SVG completo para a sua memória.</p>
+            <div class="instruction-badge">💡 Clique em qualquer card para copiar!</div>
+        </div>
+
+        <!-- Coluna da Grade de Cores e Logotipos à Direita -->
+        <div class="palette-grid">
+            
+            <!-- Grupo de Logotipos e Ícones SVG -->
+            <div class="palette-group">
+                <div class="group-title">Official Brand Assets & Logos</div>
+                <div class="assets-row">
+                    <div class="asset-card" onclick="copyAsset('logo', 'Wordmark TravelBACK')">
+                        <div class="preview-box">
+                            <svg viewBox="0 0 310 43" preserveAspectRatio="xMidYMid meet"><use href="#brand-logo"/></svg>
+                        </div>
+                        <span class="name">Logotipo Completo</span>
+                        <span class="label">Wordmark SVG</span>
+                    </div>
+                    <div class="asset-card" onclick="copyAsset('mark', 'Grafismo Símbolo A')">
+                        <div class="preview-box">
+                            <svg viewBox="0 0 82 88" preserveAspectRatio="xMidYMid meet"><use href="#brand-mark"/></svg>
+                        </div>
+                        <span class="name">Ícone / Símbolo</span>
+                        <span class="label">Mark A SVG</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grupo Principal / Homepage (TravelBACK) -->
+            <div class="palette-group">
+                <div class="group-title">Primary Violets & Brand Core</div>
+                <div class="palette-row">
+                    <div class="color-card c-pv900" onclick="copyColor('#1a0f4a', 'Violet 900')"><span class="name">Violet 900</span>#1a0f4a</div>
+                    <div class="color-card c-pv800" onclick="copyColor('#241569', 'Violet 800')"><span class="name">Violet 800</span>#241569</div>
+                    <div class="color-card c-pv700" onclick="copyColor('#3a1fb8', 'Violet 700')"><span class="name">Violet 700</span>#3a1fb8</div>
+                    <div class="color-card c-pv600" onclick="copyColor('#5b3fe4', 'Violet 600')"><span class="name">Violet 600</span>#5b3fe4</div>
+                </div>
+                <div class="palette-row" style="margin-top: 12px;">
+                    <div class="color-card c-pv500" onclick="copyColor('#7c5cff', 'Violet 500')"><span class="name">Violet 500</span>#7c5cff</div>
+                    <div class="color-card c-pv100" onclick="copyColor('#e8e1ff', 'Violet 100')"><span class="name">Violet 100</span>#e8e1ff</div>
+                    <div class="color-card c-pmint" onclick="copyColor('#7ff5c5', 'Mint Brand')"><span class="name">Mint Brand</span>#7ff5c5</div>
+                    <div class="color-card c-pmintdk" onclick="copyColor('#4fd9a3', 'Mint Dark')"><span class="name">Mint Dark</span>#4fd9a3</div>
+                </div>
+                <div class="palette-row" style="margin-top: 12px;">
+                    <div class="color-card c-pcream" onclick="copyColor('#f2efe9', 'Cream Base')"><span class="name">Cream Base</span>#f2efe9</div>
+                    <div class="color-card c-pcreamdk" onclick="copyColor('#e8e4dc', 'Cream Dark')"><span class="name">Cream Dark</span>#e8e4dc</div>
+                    <div class="color-card c-pcoral" onclick="copyColor('#ee6e5f', 'Coral Brand')"><span class="name">Coral Brand</span>#ee6e5f</div>
+                    <div class="color-card c-pcoralsft" onclick="copyColor('#fde9e6', 'Coral Soft')"><span class="name">Coral Soft</span>#fde9e6</div>
+                </div>
+            </div>
+
+            <!-- Grupo Purple Secundário -->
+            <div class="palette-group">
+                <div class="group-title">Secondary Purple Tones</div>
+                <div class="palette-row">
+                    <div class="color-card c-p1" onclick="copyColor('#878196', 'Purple 100')"><span class="name">Purple 100</span>#878196</div>
+                    <div class="color-card c-p2" onclick="copyColor('#5F5673', 'Purple 200')"><span class="name">Purple 200</span>#5F5673</div>
+                    <div class="color-card c-p3" onclick="copyColor('#0F022D', 'Purple 300')"><span class="name">Purple 300</span>#0F022D</div>
+                </div>
+            </div>
+
+            <!-- Grupo Neutrals / Grays -->
+            <div class="palette-group">
+                <div class="group-title">Neutrals & Grays</div>
+                <div class="palette-row">
+                    <div class="color-card c-n1" onclick="copyColor('#EEEEF0', 'Neutral Light')"><span class="name">Neutral Light</span>#EEEEF0</div>
+                    <div class="color-card c-n2" onclick="copyColor('#B7B8BB', 'Gray Light')"><span class="name">Gray Light</span>#B7B8BB</div>
+                    <div class="color-card c-n3" onclick="copyColor('#6E6F70', 'Gray Mid')"><span class="name">Gray Mid</span>#6E6F70</div>
+                    <div class="color-card c-n4" onclick="copyColor('#5F5673', 'Gray Dark')"><span class="name">Gray Dark</span>#5F5673</div>
+                </div>
+            </div>
+
+            <!-- Grupo Mints Secundários -->
+            <div class="palette-group">
+                <div class="group-title">Mint Accents</div>
+                <div class="palette-row">
+                    <div class="color-card c-m1" onclick="copyColor('#B6F5E5', 'Mint 100')"><span class="name">Mint 100</span>#B6F5E5</div>
+                    <div class="color-card c-m2" onclick="copyColor('#6CEBCA', 'Mint 200')"><span class="name">Mint 200</span>#6CEBCA</div>
+                    <div class="color-card c-m3" onclick="copyColor('#85EED3', 'Mint 300')"><span class="name">Mint 300</span>#85EED3</div>
+                </div>
+            </div>
+
+            <!-- Grupo Yellows -->
+            <div class="palette-group">
+                <div class="group-title">Yellow Accents</div>
+                <div class="palette-row">
+                    <div class="color-card c-y1" onclick="copyColor('#F5ECB6', 'Yellow 100')"><span class="name">Yellow 100</span>#F5ECB6</div>
+                    <div class="color-card c-y2" onclick="copyColor('#FCEFA3', 'Yellow 200')"><span class="name">Yellow 200</span>#FCEFA3</div>
+                    <div class="color-card c-y3" onclick="copyColor('#F9E87F', 'Yellow 300')"><span class="name">Yellow 300</span>#F9E87F</div>
+                    <div class="color-card c-y4" onclick="copyColor('#EBD86C', 'Yellow 400')"><span class="name">Yellow 400</span>#EBD86C</div>
+                </div>
+            </div>
+
+            <!-- Grupo Corals Secundários -->
+            <div class="palette-group">
+                <div class="group-title">Coral Accents</div>
+                <div class="palette-row">
+                    <div class="color-card c-c1" onclick="copyColor('#F89E9E', 'Coral 100')"><span class="name">Coral 100</span>#F89E9E</div>
+                    <div class="color-card c-c2" onclick="copyColor('#F98888', 'Coral 200')"><span class="name">Coral 200</span>#F98888</div>
+                    <div class="color-card c-c4" onclick="copyColor('#F03D3D', 'Coral 400')"><span class="name">Coral 400</span>#F03D3D</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const svgsData = {
+            logo: `<svg viewBox="0 0 310 43" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M0 5.62419V1.26758H30.4171V5.62419H17.6641V41.8237H12.753V5.62419H0Z"/><path d="M34.2044 41.8237V11.4066H38.7194V16.0009H39.0363C39.5907 14.4958 40.5941 13.2747 42.0463 12.3373C43.4985 11.4 45.1355 10.9313 46.9574 10.9313C47.3006 10.9313 47.7297 10.9379 48.2446 10.9511C48.7594 10.9643 49.1489 10.9841 49.4129 11.0106V15.7632C49.2545 15.7236 48.8914 15.6642 48.3238 15.585C47.7693 15.4926 47.1818 15.4464 46.5613 15.4464C45.0827 15.4464 43.7625 15.7566 42.6008 16.3771C41.4522 16.9844 40.5413 17.8293 39.868 18.9119C39.2079 19.9812 38.8778 21.2024 38.8778 22.5754V41.8237H34.2044Z"/><path d="M63.9036 42.5366C61.9761 42.5366 60.2269 42.1735 58.6559 41.4474C57.0848 40.7081 55.8373 39.6454 54.9131 38.2592C53.989 36.8598 53.5269 35.17 53.5269 33.1897C53.5269 31.447 53.8702 30.0344 54.5567 28.9519C55.2432 27.8561 56.1607 26.998 57.3093 26.3775C58.4578 25.757 59.7252 25.295 61.1114 24.9913C62.5108 24.6745 63.9168 24.4236 65.3294 24.2388C67.1777 24.0012 68.6761 23.823 69.8246 23.7041C70.9864 23.5721 71.8313 23.3543 72.3594 23.0506C72.9007 22.747 73.1713 22.2189 73.1713 21.4664V21.308C73.1713 19.3541 72.6366 17.8359 71.5673 16.7534C70.5111 15.6708 68.9071 15.1295 66.7552 15.1295C64.5241 15.1295 62.7749 15.618 61.5075 16.5949C60.2401 17.5719 59.349 18.6148 58.8341 19.7238L54.3983 18.1396C55.1904 16.2913 56.2465 14.8523 57.5667 13.8225C58.9001 12.7796 60.3523 12.0535 61.9233 11.6442C63.5076 11.2218 65.0654 11.0106 66.5968 11.0106C67.5737 11.0106 68.6959 11.1294 69.9633 11.367C71.2438 11.5914 72.4782 12.0601 73.6664 12.773C74.8678 13.4859 75.8645 14.5619 76.6566 16.0009C77.4487 17.4399 77.8448 19.3673 77.8448 21.7833V41.8237H73.1713V37.7047H72.9337C72.6168 38.3648 72.0888 39.0711 71.3495 39.8236C70.6102 40.5761 69.6266 41.2164 68.3988 41.7445C67.1711 42.2726 65.6727 42.5366 63.9036 42.5366Z"/><path d="M110.158 11.4066L98.91 41.8237H94.1573L82.9093 11.4066H87.9789L96.3752 35.6452H96.6921L105.088 11.4066H110.158Z"/><path d="M127.99 42.4574C125.06 42.4574 122.531 41.8105 120.406 40.5167C118.294 39.2097 116.663 37.3879 115.515 35.0511C114.379 32.7012 113.812 29.9684 113.812 26.8528C113.812 23.7371 114.379 20.9912 115.515 18.6148C116.663 16.2253 118.261 14.3638 120.307 13.0304C122.366 11.6838 124.769 11.0106 127.515 11.0106C129.099 11.0106 130.664 11.2746 132.208 11.8027C133.753 12.3307 135.159 13.1889 136.426 14.377C137.694 15.552 138.704 17.1098 139.456 19.0505C140.209 20.9912 140.585 23.3807 140.585 26.2191V28.1994H117.138V24.1596H135.832C135.832 22.4434 135.489 20.9119 134.803 19.5654C134.129 18.2188 133.166 17.156 131.911 16.3771C130.67 15.5982 129.205 15.2087 127.515 15.2087C125.654 15.2087 124.043 15.6708 122.683 16.5949C121.337 17.5059 120.3 18.694 119.574 20.1594C118.848 21.6248 118.485 23.1959 118.485 24.8725V27.5657C118.485 29.8628 118.881 31.8101 119.673 33.4075C120.479 34.9917 121.594 36.1997 123.02 37.0314C124.446 37.8499 126.103 38.2592 127.99 38.2592C129.218 38.2592 130.327 38.0876 131.317 37.7443C132.321 37.3879 133.185 36.8598 133.911 36.1601C134.638 35.4472 135.199 34.5627 135.595 33.5065L140.11 34.7739C139.634 36.3053 138.836 37.6519 137.714 38.8137C136.591 39.9622 135.205 40.86 133.555 41.5069C131.905 42.1405 130.05 42.4574 127.99 42.4574Z"/><path d="M152.368 1.26758V41.8237H147.694V1.26758H152.368Z"/><path d="M159.951 41.1106V0.554478H175.477C178.407 0.554478 180.843 1.01654 182.784 1.94067C184.738 2.8516 186.196 4.09918 187.16 5.6834C188.137 7.26762 188.626 9.06308 188.626 11.0698C188.626 12.72 188.309 14.1326 187.675 15.3076C187.041 16.4693 186.19 17.4133 185.121 18.1394C184.051 18.8655 182.856 19.3869 181.536 19.7038V20.0998C182.975 20.179 184.355 20.6213 185.675 21.4266C187.008 22.2187 188.098 23.3409 188.942 24.7931C189.787 26.2453 190.21 28.0011 190.21 30.0606C190.21 32.1597 189.702 34.0476 188.685 35.7242C187.668 37.3877 186.137 38.7013 184.091 39.665C182.044 40.6287 179.47 41.1106 176.368 41.1106H159.951Z"/><path d="M201.809 41.1106H193.967L208.245 0.554478H217.315L231.613 41.1106H223.771L212.938 8.87165H212.622L201.809 41.1106Z"/><path d="M269.763 14.2382H262.356C262.145 13.0236 261.756 11.9477 261.188 11.0104C260.62 10.0598 259.914 9.25451 259.069 8.59441C258.224 7.93432 257.26 7.43925 256.178 7.1092C255.109 6.76596 253.953 6.59433 252.712 6.59433C250.508 6.59433 248.554 7.14881 246.851 8.25776C245.148 9.35352 243.814 10.9641 242.851 13.0896C241.887 15.2019 241.405 17.7829 241.405 20.8325C241.405 23.935 241.887 26.5489 242.851 28.6744C243.828 30.7867 245.161 32.3842 246.851 33.4667C248.554 34.5361 250.501 35.0707 252.693 35.0707C253.907 35.0707 255.043 34.9123 256.099 34.5955C257.168 34.2654 258.125 33.7836 258.97 33.1499C259.828 32.5162 260.548 31.7373 261.129 30.8131C261.723 29.889 262.132 28.8329 262.356 27.6447L269.763 27.6843C269.485 29.6118 268.885 31.4204 267.961 33.1103C267.05 34.8001 265.855 36.2919 264.376 37.5857C262.898 38.8663 261.168 39.8696 259.188 40.5957C257.208 41.3086 255.01 41.6651 252.594 41.6651C249.029 41.6651 245.847 40.84 243.049 39.1897C240.25 37.5395 238.045 35.1566 236.434 32.0409C234.824 28.9253 234.019 25.1892 234.019 20.8325C234.019 16.4627 234.83 12.7266 236.454 9.62416C238.078 6.50852 240.289 4.12558 243.088 2.47535C245.887 0.825116 249.055 0 252.594 0C254.851 0 256.95 0.316844 258.891 0.950533C260.832 1.58422 262.561 2.51496 264.079 3.74273C265.597 4.9573 266.845 6.44911 267.822 8.21816C268.812 9.97401 269.459 11.9807 269.763 14.2382Z"/><path d="M276.491 41.1106V0.554478H283.837V19.1889H284.332L300.155 0.554478H309.126L293.442 18.7532L309.264 41.1106H300.432L288.333 23.7237L283.837 29.0309V41.1106H276.491Z"/></svg>`,
+            mark: `<svg viewBox="0 0 82 88" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M16.9569 87.6962H0L30.8735 0H50.4853L81.4016 87.6962H64.4447L41.022 17.9846H40.3368L16.9569 87.6962Z"/><path d="M41.0061 65.6836L58.949 87.6983H22.8203L41.0061 65.6836Z"/></svg>`
+        };
+
+        function copyColor(hexCode, colorName) {
+            navigator.clipboard.writeText(hexCode).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cor copiada!',
+                    html: `<b>${colorName}</b> (${hexCode}) foi copiada para a memória.`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'bottom-end',
+                    toast: true,
+                    background: '#1a0f4a',
+                    color: '#fff',
+                    iconColor: '#7ff5c5'
+                });
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+            });
+        }
+
+        function copyAsset(type, assetName) {
+            const code = svgsData[type];
+            navigator.clipboard.writeText(code).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'SVG copiado!',
+                    html: `O código SVG do <b>${assetName}</b> foi copiado para a memória.`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'bottom-end',
+                    toast: true,
+                    background: '#1a0f4a',
+                    color: '#fff',
+                    iconColor: '#7ff5c5'
+                });
+            }).catch(err => {
+                console.error('Erro ao copiar SVG: ', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
